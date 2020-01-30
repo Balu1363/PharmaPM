@@ -122,12 +122,12 @@
                                                 <asp:Label ID="lblPhaseID" runat="server" Text='<%#Eval("PhaseID") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Phase" ItemStyle-Width="180px">
+                                        <asp:TemplateField HeaderText="Phase">
                                             <ItemTemplate>
                                                 <asp:Label ID="lblPhase" runat="server" Text='<%#Eval("Phase") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                          <asp:TemplateField HeaderText="Order" Visible="false">
+                                          <asp:TemplateField HeaderText="Order" ItemStyle-Width="25px">
                                             <ItemTemplate>
                                                 <asp:Label ID="lblOrd" runat="server" Text='<%#Eval("Ord") %>'></asp:Label>
                                             </ItemTemplate>

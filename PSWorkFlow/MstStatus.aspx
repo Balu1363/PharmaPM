@@ -126,12 +126,12 @@
                                                 <asp:Label ID="lblStatusID" runat="server" Text='<%#Eval("StatusID") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Status" ItemStyle-Width="180px">
+                                        <asp:TemplateField HeaderText="Status">
                                             <ItemTemplate>
                                                 <asp:Label ID="lblStatus" runat="server" Text='<%#Eval("Status") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Order" Visible="false">
+                                        <asp:TemplateField HeaderText="Order" ItemStyle-Width="25px">
                                             <ItemTemplate>
                                                 <asp:Label ID="lblOrd" runat="server" Text='<%#Eval("Ord") %>'></asp:Label>
                                             </ItemTemplate>

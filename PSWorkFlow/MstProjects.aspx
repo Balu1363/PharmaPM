@@ -122,12 +122,12 @@
                                                 <asp:Label ID="lblProjID" runat="server" Text='<%#Eval("ProjID") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Project Name" ItemStyle-Width="180px">
+                                        <asp:TemplateField HeaderText="Project Name">
                                             <ItemTemplate>
                                                 <asp:Label ID="lblProjName" runat="server" Text='<%#Eval("ProjName") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Order" Visible="false">
+                                        <asp:TemplateField HeaderText="Order" ItemStyle-Width="25px">
                                             <ItemTemplate>
                                                 <asp:Label ID="lblOrd" runat="server" Text='<%#Eval("Ord") %>'></asp:Label>
                                             </ItemTemplate>

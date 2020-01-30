@@ -167,10 +167,12 @@
     <Content Include="Images\delete.png" />
     <Content Include="Images\edit.jpg" />
     <Content Include="Login.aspx" />
-    <Content Include="MstPhase.aspx" />
+    <Content Include="MstStage.aspx" />
     <Content Include="MstProjects.aspx" />
     <Content Include="MstStatus.aspx" />
+    <Content Include="MstSteps.aspx" />
     <Content Include="MstUsers.aspx" />
+    <Content Include="MstIteration.aspx" />
     <Content Include="PSWorkFlow.aspx" />
     <Content Include="PSWorkFlowView.aspx" />
     <Content Include="Content\bootstrap.min.css.map" />
@@ -302,11 +304,11 @@
       <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
-    <Compile Include="MstPhase.aspx.designer.vb">
-      <DependentUpon>MstPhase.aspx</DependentUpon>
+    <Compile Include="MstStage.aspx.designer.vb">
+      <DependentUpon>MstStage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="MstPhase.aspx.vb">
-      <DependentUpon>MstPhase.aspx</DependentUpon>
+    <Compile Include="MstStage.aspx.vb">
+      <DependentUpon>MstStage.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="MstProjects.aspx.designer.vb">
@@ -323,11 +325,25 @@
       <DependentUpon>MstStatus.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
+    <Compile Include="MstSteps.aspx.designer.vb">
+      <DependentUpon>MstSteps.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MstSteps.aspx.vb">
+      <DependentUpon>MstSteps.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
     <Compile Include="MstUsers.aspx.designer.vb">
       <DependentUpon>MstUsers.aspx</DependentUpon>
     </Compile>
     <Compile Include="MstUsers.aspx.vb">
       <DependentUpon>MstUsers.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="MstIteration.aspx.designer.vb">
+      <DependentUpon>MstIteration.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MstIteration.aspx.vb">
+      <DependentUpon>MstIteration.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />

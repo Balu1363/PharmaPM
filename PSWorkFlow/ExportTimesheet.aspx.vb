@@ -99,8 +99,8 @@ Public Class ExportTimesheet
         Try
             Using con As New MySqlConnection(conString)
                 Dim sb As StringBuilder = New StringBuilder()
-                sb.Append("Select dayname(t.dt) as Day,DATE_FORMAT(CONVERT_TZ(w.dt,'-1:30','+12:00'), '%m-%d-%Y') As dt,p.ProjName as Project,'' as SubProject,ph.Phase as TaskType,t.Task as ProjectTask, '0' as Hours,'Non Project Task' as NPT,'0' Total from taskdetails t left outer join workflow w on t.WorkFlowID=w.WorkFlowId")
-                sb.Append(" left outer join projects p on w.ProjID=p.ProjID left outer join projectphase ph on w.PhaseID=ph.PhaseID where  t.dt Between '" & fromDate & "' and '" & toDate & "' ")
+                sb.Append("Select dayname(t.dt) as Day,DATE_FORMAT(CONVERT_TZ(w.dt,'-1:30','+12:00'), '%m-%d-%Y') As dt,p.ProjName as Project,'' as SubProject,ph.Stage as TaskType,t.Task as ProjectTask, '0' as Hours,'Non Project Task' as NPT,'0' Total from taskdetails t left outer join workflow w on t.WorkFlowID=w.WorkFlowId")
+                sb.Append(" left outer join projects p on w.ProjID=p.ProjID left outer join projectphase ph on w.StageID=ph.StageID where  t.dt Between '" & fromDate & "' and '" & toDate & "' ")
                 If Role = "Admin" Then
                     If ddlEmployee.SelectedIndex > 0 Then
                         sb.Append(" and t.EmpId=" & ddlEmployee.SelectedValue & "")
@@ -205,8 +205,8 @@ Public Class ExportTimesheet
             Dim todt As DateTime = DateTime.ParseExact(result(2).ToString().Trim(), "MM/dd/yyyy", CultureInfo.InvariantCulture)
             Dim toDate As String = todt.ToString("yyyy-MM-dd")
             Dim sbQuery As StringBuilder = New StringBuilder()
-            sbQuery.Append("Select dayname(t.dt) as Day,DATE_FORMAT(CONVERT_TZ(w.dt,'-1:30','+12:00'), '%m-%d-%Y') As dt,p.ProjName as Project,'' as SubProject,ph.Phase as TaskType,t.Task as ProjectTask, '0' as Hours,'Non Project Task' as NPT,'0' Total from taskdetails t left outer join workflow w on t.WorkFlowID=w.WorkFlowId")
-            sbQuery.Append(" left outer join projects p on w.ProjID=p.ProjID left outer join projectphase ph on w.PhaseID=ph.PhaseID where t.dt Between '" & fromDate & "' and '" & toDate & "' ")
+            sbQuery.Append("Select dayname(t.dt) as Day,DATE_FORMAT(CONVERT_TZ(w.dt,'-1:30','+12:00'), '%m-%d-%Y') As dt,p.ProjName as Project,'' as SubProject,ph.Stage as TaskType,t.Task as ProjectTask, '0' as Hours,'Non Project Task' as NPT,'0' Total from taskdetails t left outer join workflow w on t.WorkFlowID=w.WorkFlowId")
+            sbQuery.Append(" left outer join projects p on w.ProjID=p.ProjID left outer join projectphase ph on w.StageID=ph.StageID where t.dt Between '" & fromDate & "' and '" & toDate & "' ")
 
             If Role = "Admin" Then
                 If ddlEmployee.SelectedIndex > 0 Then

@@ -11,7 +11,7 @@ Option Strict On
 Option Explicit On
 
 
-Partial Public Class PSWorkFlowView
+Partial Public Class MstStage
     
     '''<summary>
     '''form1 control.
@@ -21,15 +21,6 @@ Partial Public Class PSWorkFlowView
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents form1 As Global.System.Web.UI.HtmlControls.HtmlForm
-    
-    '''<summary>
-    '''showadmin control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents showadmin As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
     '''lblEmpName control.
@@ -86,85 +77,67 @@ Partial Public Class PSWorkFlowView
     Protected WithEvents lblMsg As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''txtSearch control.
+    '''Label1 control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtSearch As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents Label1 As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''ddlProject control.
+    '''txtStage control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlProject As Global.System.Web.UI.WebControls.DropDownList
+    Protected WithEvents txtStage As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''ddlStage control.
+    '''reqProjects control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlStage As Global.System.Web.UI.WebControls.DropDownList
+    Protected WithEvents reqProjects As Global.System.Web.UI.WebControls.RequiredFieldValidator
     
     '''<summary>
-    '''ddlStep control.
+    '''txtOrder control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlStep As Global.System.Web.UI.WebControls.DropDownList
+    Protected WithEvents txtOrder As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''ddlIteration control.
+    '''RequiredFieldValidator1 control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlIteration As Global.System.Web.UI.WebControls.DropDownList
+    Protected WithEvents RequiredFieldValidator1 As Global.System.Web.UI.WebControls.RequiredFieldValidator
     
     '''<summary>
-    '''ddlStatus control.
+    '''btnSave control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlStatus As Global.System.Web.UI.WebControls.DropDownList
+    Protected WithEvents btnSave As Global.System.Web.UI.WebControls.Button
     
     '''<summary>
-    '''ddlAssignedTo control.
+    '''btnCancel control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlAssignedTo As Global.System.Web.UI.WebControls.DropDownList
-    
-    '''<summary>
-    '''btnSearch control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents btnSearch As Global.System.Web.UI.WebControls.Button
-    
-    '''<summary>
-    '''btnClear control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents btnClear As Global.System.Web.UI.WebControls.Button
+    Protected WithEvents btnCancel As Global.System.Web.UI.WebControls.Button
     
     '''<summary>
     '''PnlGrid control.
@@ -176,11 +149,11 @@ Partial Public Class PSWorkFlowView
     Protected WithEvents PnlGrid As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
-    '''GvPartSales control.
+    '''gvStage control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents GvPartSales As Global.System.Web.UI.WebControls.GridView
+    Protected WithEvents gvStage As Global.System.Web.UI.WebControls.GridView
 End Class

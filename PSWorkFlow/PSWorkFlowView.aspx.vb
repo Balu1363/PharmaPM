@@ -24,7 +24,9 @@ Public Class PSWorkFlowView
                     showadmin.Visible = False
                 End If
                 BindDDLProject()
-                BindDDLPhase()
+                BindDDLStage()
+                ddlStep.Items.Insert(0, "--Select--")
+                ddlIteration.Items.Insert(0, "--Select--")
                 BindDDLStatus()
                 BindDDLAssignTo()
                 BindGrid()
@@ -102,11 +104,11 @@ Public Class PSWorkFlowView
         End Try
     End Sub
 
-    Private Sub BindDDLPhase()
+    Private Sub BindDDLStage()
         Try
             Dim Query As String
             dt.Clear()
-            Query = "Select PhaseID,Phase from ProjectPhase where Status=true Order By Ord"
+            Query = "Select StageID,Stage from Stage where Status=true Order By Ord"
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(Query, con)
             dt = New DataTable()
@@ -116,15 +118,15 @@ Public Class PSWorkFlowView
             dt.Load(cmd.ExecuteReader())
             con.Close()
             If dt.Rows.Count > 0 Then
-                ddlPhase.DataSource = dt
-                ddlPhase.DataValueField = "PhaseID"
-                ddlPhase.DataTextField = "Phase"
-                ddlPhase.DataBind()
-                ddlPhase.Items.Insert(0, "--Select--")
+                ddlStage.DataSource = dt
+                ddlStage.DataValueField = "StageID"
+                ddlStage.DataTextField = "Stage"
+                ddlStage.DataBind()
+                ddlStage.Items.Insert(0, "--Select--")
             Else
-                ddlPhase.Items.Clear()
-                ddlPhase.Items.Insert(0, "--Select--")
-                ddlPhase.SelectedIndex = 0
+                ddlStage.Items.Clear()
+                ddlStage.Items.Insert(0, "--Select--")
+                ddlStage.SelectedIndex = 0
             End If
         Catch ex As Exception
             dvMsg.Visible = True
@@ -168,15 +170,15 @@ Public Class PSWorkFlowView
             lblMsg.Visible = False
             Dim sb As StringBuilder = New StringBuilder()
             dt.Clear()
-            sb.Append("Select * from (Select w.WorkFlowId,w.ProjID,w.PhaseID,w.AssignedTo,w.StatusID,w.Title,p.ProjName,ph.Phase,concat(e.EmpFirst, ' ', e.EmpLast) as AssignedToUser,s.Status,DATE_FORMAT(CONVERT_TZ(w.dt,'-1:30','+12:00'), '%m/%d/%Y %l:%i %p') as Updated,")
-            sb.Append(" concat(w.WorkFlowId,' ',w.Title,' ',IF(p.ProjName IS NULL or p.ProjName = '', 'null', p.ProjName),' ',IF(ph.Phase IS NULL or ph.Phase = '', 'null', ph.Phase),' ',concat(e.EmpFirst, ' ', e.EmpLast),' ',IF(s.Status IS NULL or s.Status = '', 'null', s.Status)) as searchby ")
-            sb.Append(" from WorkFlow w left outer join Projects p on p.ProjID=w.ProjID left outer join ProjectPhase ph on ph.PhaseID=w.PhaseID   left outer join Status s on s.StatusID=w.StatusID ")
+            sb.Append("Select * from (Select w.WorkFlowId,w.ProjID,w.StageID,w.AssignedTo,w.StatusID,w.Title,p.ProjName,ph.Stage,concat(e.EmpFirst, ' ', e.EmpLast) as AssignedToUser,s.Status,DATE_FORMAT(CONVERT_TZ(w.dt,'-1:30','+12:00'), '%m/%d/%Y %l:%i %p') as Updated,")
+            sb.Append(" concat(w.WorkFlowId,' ',w.Title,' ',IF(p.ProjName IS NULL or p.ProjName = '', 'null', p.ProjName),' ',IF(ph.Stage IS NULL or ph.Stage = '', 'null', ph.Stage),' ',concat(e.EmpFirst, ' ', e.EmpLast),' ',IF(s.Status IS NULL or s.Status = '', 'null', s.Status)) as searchby ")
+            sb.Append(" from WorkFlow w left outer join Projects p on p.ProjID=w.ProjID left outer join Stage ph on ph.StageID=w.StageID   left outer join Status s on s.StatusID=w.StatusID ")
             sb.Append(" left outer join Employees e on e.EmpID=w.AssignedTo order by w.WorkFlowId desc) tbl where WorkFlowId IS Not NULL ")
             If ddlProject.SelectedIndex > 0 Then
                 sb.Append(" And ProjID =" & ddlProject.SelectedValue & "")
             End If
-            If ddlPhase.SelectedIndex > 0 Then
-                sb.Append(" And PhaseID =" & ddlPhase.SelectedValue & "")
+            If ddlStage.SelectedIndex > 0 Then
+                sb.Append(" And StageID =" & ddlStage.SelectedValue & "")
             End If
             If Role = "Admin" Then
                 If ddlAssignedTo.SelectedIndex > 0 Then
@@ -277,39 +279,6 @@ Public Class PSWorkFlowView
 
     End Sub
 
-    'Private Sub BindDDLSearchBy()
-    '    Try
-    '        Dim Query As String
-    '        dt.Clear()
-    '        Query = "Select Id,SearchBy from SearchBy order by Id;"
-    '        con = New MySqlConnection(conString)
-    '        cmd = New MySqlCommand(Query, con)
-    '        dt = New DataTable()
-    '        dt.Columns.Clear()
-    '        dt.Clear()
-    '        con.Open()
-    '        dt.Load(cmd.ExecuteReader())
-    '        con.Close()
-    '        If dt.Rows.Count > 0 Then
-    '            ddlSearch.DataSource = dt
-    '            ddlSearch.DataValueField = "Id"
-    '            ddlSearch.DataTextField = "SearchBy"
-    '            ddlSearch.DataBind()
-    '            ddlSearch.Items.Insert(0, "--Select--")
-    '        Else
-    '            ddlSearch.Items.Clear()
-    '            ddlSearch.Items.Insert(0, "--Select--")
-    '            ddlSearch.SelectedIndex = 0
-    '        End If
-    '    Catch ex As Exception
-    '        dvMsgSuccess.Visible = False
-    '        lblMsgSuccess.Visible = False
-    '        dvMsg.Visible = True
-    '        lblMsg.Visible = True
-    '        lblMsg.Text = ex.Message
-    '    End Try
-    'End Sub
-
     Protected Sub lnkLogout_Click(sender As Object, e As EventArgs)
         Session.Abandon()
         Session("EmpId") = Nothing
@@ -319,9 +288,93 @@ Public Class PSWorkFlowView
     Protected Sub btnClear_Click(sender As Object, e As EventArgs)
         txtSearch.Text = String.Empty
         ddlProject.SelectedIndex = 0
-        ddlPhase.SelectedIndex = 0
+        ddlStage.SelectedIndex = 0
         ddlStatus.SelectedIndex = 0
         ddlAssignedTo.SelectedIndex = 0
         BindGrid()
+    End Sub
+
+    Protected Sub ddlStage_SelectedIndexChanged(sender As Object, e As EventArgs)
+        BindStep()
+    End Sub
+
+    Private Sub BindStep()
+        If ddlStage.SelectedIndex > 0 Then
+            Try
+                Dim Query As String
+                dt.Clear()
+                Query = "Select StepID,Step from Steps where Status=true and StageID=" & ddlStage.SelectedValue & " Order By Ord"
+                con = New MySqlConnection(conString)
+                cmd = New MySqlCommand(Query, con)
+                dt = New DataTable()
+                dt.Columns.Clear()
+                dt.Clear()
+                con.Open()
+                dt.Load(cmd.ExecuteReader())
+                con.Close()
+                If dt.Rows.Count > 0 Then
+                    ddlStep.DataSource = dt
+                    ddlStep.DataValueField = "StepID"
+                    ddlStep.DataTextField = "Step"
+                    ddlStep.DataBind()
+                    ddlStep.Items.Insert(0, "--Select--")
+                Else
+                    ddlStep.Items.Clear()
+                    ddlStep.Items.Insert(0, "--Select--")
+                    ddlStep.SelectedIndex = 0
+                End If
+            Catch ex As Exception
+                dvMsg.Visible = True
+                lblMsg.Text = ex.Message
+            End Try
+        Else
+            ddlStep.Items.Clear()
+            ddlStep.Items.Insert(0, "--Select--")
+            ddlStep.SelectedIndex = 0
+
+            ddlIteration.Items.Clear()
+            ddlIteration.Items.Insert(0, "--Select--")
+            ddlIteration.SelectedIndex = 0
+        End If
+    End Sub
+
+    Protected Sub ddlStep_SelectedIndexChanged(sender As Object, e As EventArgs)
+        BindIteration()
+    End Sub
+
+    Private Sub BindIteration()
+        If ddlStep.SelectedIndex > 0 Then
+            Try
+                Dim Query As String
+                dt.Clear()
+                Query = "Select IterationID,Iteration from Iteration where Status=true and StageID=" & ddlStage.SelectedValue & " and StepID=" & ddlStep.SelectedValue & " Order By Ord"
+                con = New MySqlConnection(conString)
+                cmd = New MySqlCommand(Query, con)
+                dt = New DataTable()
+                dt.Columns.Clear()
+                dt.Clear()
+                con.Open()
+                dt.Load(cmd.ExecuteReader())
+                con.Close()
+                If dt.Rows.Count > 0 Then
+                    ddlIteration.DataSource = dt
+                    ddlIteration.DataValueField = "IterationID"
+                    ddlIteration.DataTextField = "Iteration"
+                    ddlIteration.DataBind()
+                    ddlIteration.Items.Insert(0, "--Select--")
+                Else
+                    ddlIteration.Items.Clear()
+                    ddlIteration.Items.Insert(0, "--Select--")
+                    ddlIteration.SelectedIndex = 0
+                End If
+            Catch ex As Exception
+                dvMsg.Visible = True
+                lblMsg.Text = ex.Message
+            End Try
+        Else
+            ddlIteration.Items.Clear()
+            ddlIteration.Items.Insert(0, "--Select--")
+            ddlIteration.SelectedIndex = 0
+        End If
     End Sub
 End Class

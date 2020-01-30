@@ -28,7 +28,9 @@ Public Class PSWorkFlow
                     showadmin.Visible = False
                 End If
                 BindDDLProject()
-                BindDDLPhase()
+                BindDDLStage()
+                ddlStep.Items.Insert(0, "--Select--")
+                ddlIteration.Items.Insert(0, "--Select--")
                 BindDDLAssignTo()
                 BindDDLStatus()
                 dvHistory.Visible = False
@@ -50,7 +52,7 @@ Public Class PSWorkFlow
     Private Sub BindWorkFlow()
         Try
             Dim sb As StringBuilder = New StringBuilder()
-            sb.Append("Select WorkFlowId,Title,ProjID,PhaseID,AssignedTo,StatusID,EmpId,Dt,")
+            sb.Append("Select WorkFlowId,Title,ProjID,StageID,StepID,IterationID,AssignedTo,StatusID,EmpId,Dt,")
             sb.Append(" (Select Note from Notes order by NoteId desc Limit 1) as Note From WorkFlow Where Status =@Status And WorkFlowId=@WorkFlowId")
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(sb.ToString(), con)
@@ -71,12 +73,27 @@ Public Class PSWorkFlow
                 If checkProject.ToString().Length > 0 Then
                     ddlProject.SelectedValue = Convert.ToInt32(dtp.Rows(0)("ProjID"))
                 End If
-                Dim checkPhaseID As String
-                checkPhaseID = Convert.ToString(dtp.Rows(0)("PhaseID"))
-                If checkPhaseID.ToString().Length > 0 Then
-                    ddlPhase.SelectedValue = Convert.ToInt32(dtp.Rows(0)("PhaseID"))
+                Dim checkStageID As String
+                checkStageID = Convert.ToString(dtp.Rows(0)("StageID"))
+                If checkStageID.ToString().Length > 0 Then
+                    ddlStage.SelectedValue = Convert.ToInt32(dtp.Rows(0)("StageID"))
+                    If ddlStage.SelectedIndex > 0 Then
+                        Dim checkStepID As String
+                        checkStepID = Convert.ToString(dtp.Rows(0)("StepID"))
+                        If checkStepID.ToString().Length > 0 Then
+                            BindStep()
+                            ddlStep.SelectedValue = Convert.ToInt32(dtp.Rows(0)("StepID"))
+                            If ddlStep.SelectedIndex > 0 Then
+                                Dim checkIterationID As String
+                                checkIterationID = Convert.ToString(dtp.Rows(0)("IterationID"))
+                                If checkIterationID.ToString().Length > 0 Then
+                                    BindIteration()
+                                    ddlIteration.SelectedValue = Convert.ToInt32(dtp.Rows(0)("IterationID"))
+                                End If
+                            End If
+                        End If
+                    End If
                 End If
-
                 Dim checkAssign As String
                 checkAssign = Convert.ToString(dtp.Rows(0)("AssignedTo"))
                 If checkAssign.ToString().Length > 0 Then
@@ -157,8 +174,8 @@ Public Class PSWorkFlow
 
             If btnSubmit.Text = "Submit" Then
                 Dim sbInsert As StringBuilder = New StringBuilder()
-                sbInsert.Append(" Insert Into WorkFLow (Title, ProjID, PhaseID, AssignedTo, StatusID, Status, EmpId, dt) ")
-                sbInsert.Append(" Values (@Title,@ProjID,@PhaseID,@AssignedTo,@StatusID,@Status,@EmpId,now() ); SELECT LAST_INSERT_ID() as WorkFlowId; ")
+                sbInsert.Append(" Insert Into WorkFLow (Title, ProjID, StageID, AssignedTo, StatusID,StepID,IterationID, Status, EmpId, dt) ")
+                sbInsert.Append(" Values (@Title,@ProjID,@StageID,@AssignedTo,@StatusID,@StepID,@IterationID,@Status,@EmpId,now() ); SELECT LAST_INSERT_ID() as WorkFlowId; ")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sbInsert.ToString(), con)
                 cmd.Parameters.AddWithValue("@Title", txtTitle.Text.Trim)
@@ -168,10 +185,10 @@ Public Class PSWorkFlow
                 Else
                     cmd.Parameters.AddWithValue("@ProjID", DBNull.Value)
                 End If
-                If ddlPhase.SelectedIndex > 0 Then
-                    cmd.Parameters.AddWithValue("@PhaseID", ddlPhase.SelectedValue)
+                If ddlStage.SelectedIndex > 0 Then
+                    cmd.Parameters.AddWithValue("@StageID", ddlStage.SelectedValue)
                 Else
-                    cmd.Parameters.AddWithValue("@PhaseID", DBNull.Value)
+                    cmd.Parameters.AddWithValue("@StageID", DBNull.Value)
                 End If
                 If ddlAssignedTo.SelectedIndex > 0 Then
                     cmd.Parameters.AddWithValue("@AssignedTo", ddlAssignedTo.SelectedValue)
@@ -182,6 +199,16 @@ Public Class PSWorkFlow
                     cmd.Parameters.AddWithValue("@StatusID", ddlStatus.SelectedValue)
                 Else
                     cmd.Parameters.AddWithValue("@StatusID", DBNull.Value)
+                End If
+                If ddlStep.SelectedIndex > 0 Then
+                    cmd.Parameters.AddWithValue("@StepID", ddlStep.SelectedValue)
+                Else
+                    cmd.Parameters.AddWithValue("@StepID", DBNull.Value)
+                End If
+                If ddlIteration.SelectedIndex > 0 Then
+                    cmd.Parameters.AddWithValue("@IterationID", ddlIteration.SelectedValue)
+                Else
+                    cmd.Parameters.AddWithValue("@IterationID", DBNull.Value)
                 End If
                 cmd.Parameters.AddWithValue("@Status", True)
                 cmd.Parameters.AddWithValue("@EmpId", UserId)
@@ -210,8 +237,8 @@ Public Class PSWorkFlow
                 InsertNote(False)
 
                 Dim sb As StringBuilder = New StringBuilder()
-                sb.Append(" Update WorkFLow Set Title=@Title,ProjID=@ProjID,PhaseID=@PhaseID, ")
-                sb.Append(" AssignedTo=@AssignedTo,StatusID=@StatusID,EmpId=@EmpId,Dt=now() Where WorkFlowId=@WorkFlowId")
+                sb.Append(" Update WorkFLow Set Title=@Title,ProjID=@ProjID,StageID=@StageID, ")
+                sb.Append(" AssignedTo=@AssignedTo,StatusID=@StatusID,StepID=@StepID,IterationID=@IterationID,EmpId=@EmpId,Dt=now() Where WorkFlowId=@WorkFlowId")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sb.ToString(), con)
                 cmd.Parameters.AddWithValue("@Title", txtTitle.Text.Trim)
@@ -221,10 +248,10 @@ Public Class PSWorkFlow
                 Else
                     cmd.Parameters.AddWithValue("@ProjID", DBNull.Value)
                 End If
-                If ddlPhase.SelectedIndex > 0 Then
-                    cmd.Parameters.AddWithValue("@PhaseID", ddlPhase.SelectedValue)
+                If ddlStage.SelectedIndex > 0 Then
+                    cmd.Parameters.AddWithValue("@StageID", ddlStage.SelectedValue)
                 Else
-                    cmd.Parameters.AddWithValue("@PhaseID", DBNull.Value)
+                    cmd.Parameters.AddWithValue("@StageID", DBNull.Value)
                 End If
                 If ddlAssignedTo.SelectedIndex > 0 Then
                     cmd.Parameters.AddWithValue("@AssignedTo", ddlAssignedTo.SelectedValue)
@@ -235,6 +262,16 @@ Public Class PSWorkFlow
                     cmd.Parameters.AddWithValue("@StatusID", ddlStatus.SelectedValue)
                 Else
                     cmd.Parameters.AddWithValue("@StatusID", DBNull.Value)
+                End If
+                If ddlStep.SelectedIndex > 0 Then
+                    cmd.Parameters.AddWithValue("@StepID", ddlStep.SelectedValue)
+                Else
+                    cmd.Parameters.AddWithValue("@StepID", DBNull.Value)
+                End If
+                If ddlIteration.SelectedIndex > 0 Then
+                    cmd.Parameters.AddWithValue("@IterationID", ddlIteration.SelectedValue)
+                Else
+                    cmd.Parameters.AddWithValue("@IterationID", DBNull.Value)
                 End If
                 cmd.Parameters.AddWithValue("@EmpId", UserId)
                 cmd.Parameters.AddWithValue("@WorkFlowId", _WorkFlowId)
@@ -281,8 +318,14 @@ Public Class PSWorkFlow
                 If ddlProject.SelectedIndex > 0 Then
                     sbNote.Append("Project: " & ddlProject.SelectedItem.Text & "<br/>")
                 End If
-                If ddlPhase.SelectedIndex > 0 Then
-                    sbNote.Append("Phase: " & ddlPhase.SelectedItem.Text & "<br/>")
+                If ddlStage.SelectedIndex > 0 Then
+                    sbNote.Append("Stage: " & ddlStage.SelectedItem.Text & "<br/>")
+                End If
+                If ddlStep.SelectedIndex > 0 Then
+                    sbNote.Append("Step: " & ddlStep.SelectedItem.Text & "<br/>")
+                End If
+                If ddlIteration.SelectedIndex > 0 Then
+                    sbNote.Append("Iteration: " & ddlIteration.SelectedItem.Text & "<br/>")
                 End If
                 If ddlAssignedTo.SelectedIndex > 0 Then
                     sbNote.Append("Assigned To: " & ddlAssignedTo.SelectedItem.Text & "<br/>")
@@ -359,8 +402,8 @@ Public Class PSWorkFlow
                 End If
                 con.Close()
 
-                sb.Append(" Select w.WorkFlowId,w.Title,p.ProjName,ph.Phase,concat(e.EmpFirst ,' ', e.EmpLast) as AssignedTo,s.Status from WorkFlow w left outer join projects p on p.ProjID=w.ProjID left outer join ProjectPhase ph on ph.PhaseID=w.PhaseID ")
-                sb.Append("  left outer join Status s on s.StatusID=w.StatusID left outer join Employees e on e.EmpID=w.AssignedTo ")
+                sb.Append(" Select w.WorkFlowId,w.Title,p.ProjName,ph.Stage,st.Step,i.Iteration,concat(e.EmpFirst ,' ', e.EmpLast) as AssignedTo,s.Status from WorkFlow w left outer join projects p on p.ProjID=w.ProjID left outer join Stage ph on ph.StageID=w.StageID ")
+                sb.Append(" left outer join steps st on st.StepID=w.StepID left outer join iteration i on i.IterationID=w.IterationID left outer join Status s on s.StatusID=w.StatusID left outer join Employees e on e.EmpID=w.AssignedTo ")
                 sb.Append(" where w.Status=@Status And w.WorkFlowId=@WorkFlowId")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sb.ToString(), con)
@@ -385,9 +428,21 @@ Public Class PSWorkFlow
                         End If
                     End If
 
-                    If Convert.ToString(dcheck.Rows(0)("Phase")) <> ddlPhase.SelectedItem.Text Then
-                        If ddlPhase.SelectedIndex > 0 Then
-                            sbNote.Append("Phase Changed:  " & Convert.ToString(dcheck.Rows(0)("Phase")) & " To " & ddlPhase.SelectedItem.Text & "<br/> ")
+                    If Convert.ToString(dcheck.Rows(0)("Stage")) <> ddlStage.SelectedItem.Text Then
+                        If ddlStage.SelectedIndex > 0 Then
+                            sbNote.Append("Stage Changed:  " & Convert.ToString(dcheck.Rows(0)("Stage")) & " To " & ddlStage.SelectedItem.Text & "<br/> ")
+                        End If
+                    End If
+
+                    If Convert.ToString(dcheck.Rows(0)("Step")) <> ddlStep.SelectedItem.Text Then
+                        If ddlStep.SelectedIndex > 0 Then
+                            sbNote.Append("Step Changed:  " & Convert.ToString(dcheck.Rows(0)("Step")) & " To " & ddlStep.SelectedItem.Text & "<br/> ")
+                        End If
+                    End If
+
+                    If Convert.ToString(dcheck.Rows(0)("Iteration")) <> ddlIteration.SelectedItem.Text Then
+                        If ddlIteration.SelectedIndex > 0 Then
+                            sbNote.Append("Iteration Changed:  " & Convert.ToString(dcheck.Rows(0)("Iteration")) & " To " & ddlIteration.SelectedItem.Text & "<br/> ")
                         End If
                     End If
 
@@ -476,7 +531,7 @@ Public Class PSWorkFlow
     Private Sub ClearControls()
         txtTitle.Text = String.Empty
         ddlProject.SelectedIndex = 0
-        ddlPhase.SelectedIndex = 0
+        ddlStage.SelectedIndex = 0
         ddlAssignedTo.SelectedIndex = 0
         ddlStatus.SelectedIndex = 0
         txtNotes.Text = String.Empty
@@ -551,11 +606,11 @@ Public Class PSWorkFlow
         End Try
     End Sub
 
-    Private Sub BindDDLPhase()
+    Private Sub BindDDLStage()
         Try
             Dim Query As String
             dt.Clear()
-            Query = "Select PhaseID,Phase from ProjectPhase where Status=true Order By Ord"
+            Query = "Select StageID,Stage from Stage where Status=true Order By Ord"
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(Query, con)
             dt = New DataTable()
@@ -565,15 +620,15 @@ Public Class PSWorkFlow
             dt.Load(cmd.ExecuteReader())
             con.Close()
             If dt.Rows.Count > 0 Then
-                ddlPhase.DataSource = dt
-                ddlPhase.DataValueField = "PhaseID"
-                ddlPhase.DataTextField = "Phase"
-                ddlPhase.DataBind()
-                ddlPhase.Items.Insert(0, "--Select--")
+                ddlStage.DataSource = dt
+                ddlStage.DataValueField = "StageID"
+                ddlStage.DataTextField = "Stage"
+                ddlStage.DataBind()
+                ddlStage.Items.Insert(0, "--Select--")
             Else
-                ddlPhase.Items.Clear()
-                ddlPhase.Items.Insert(0, "--Select--")
-                ddlPhase.SelectedIndex = 0
+                ddlStage.Items.Clear()
+                ddlStage.Items.Insert(0, "--Select--")
+                ddlStage.SelectedIndex = 0
             End If
         Catch ex As Exception
             dvMsg.Visible = True
@@ -653,5 +708,89 @@ Public Class PSWorkFlow
         Session.Abandon()
         Session("EmpId") = Nothing
         Response.Redirect("~/Login.aspx")
+    End Sub
+
+    Protected Sub ddlStage_SelectedIndexChanged(sender As Object, e As EventArgs)
+        BindStep()
+    End Sub
+
+    Private Sub BindStep()
+        If ddlStage.SelectedIndex > 0 Then
+            Try
+                Dim Query As String
+                dt.Clear()
+                Query = "Select StepID,Step from Steps where Status=true and StageID=" & ddlStage.SelectedValue & " Order By Ord"
+                con = New MySqlConnection(conString)
+                cmd = New MySqlCommand(Query, con)
+                dt = New DataTable()
+                dt.Columns.Clear()
+                dt.Clear()
+                con.Open()
+                dt.Load(cmd.ExecuteReader())
+                con.Close()
+                If dt.Rows.Count > 0 Then
+                    ddlStep.DataSource = dt
+                    ddlStep.DataValueField = "StepID"
+                    ddlStep.DataTextField = "Step"
+                    ddlStep.DataBind()
+                    ddlStep.Items.Insert(0, "--Select--")
+                Else
+                    ddlStep.Items.Clear()
+                    ddlStep.Items.Insert(0, "--Select--")
+                    ddlStep.SelectedIndex = 0
+                End If
+            Catch ex As Exception
+                dvMsg.Visible = True
+                lblMsg.Text = ex.Message
+            End Try
+        Else
+            ddlStep.Items.Clear()
+            ddlStep.Items.Insert(0, "--Select--")
+            ddlStep.SelectedIndex = 0
+
+            ddlIteration.Items.Clear()
+            ddlIteration.Items.Insert(0, "--Select--")
+            ddlIteration.SelectedIndex = 0
+        End If
+    End Sub
+
+    Protected Sub ddlStep_SelectedIndexChanged(sender As Object, e As EventArgs)
+        BindIteration()
+    End Sub
+
+    Private Sub BindIteration()
+        If ddlStep.SelectedIndex > 0 Then
+            Try
+                Dim Query As String
+                dt.Clear()
+                Query = "Select IterationID,Iteration from Iteration where Status=true and StageID=" & ddlStage.SelectedValue & " and StepID=" & ddlStep.SelectedValue & " Order By Ord"
+                con = New MySqlConnection(conString)
+                cmd = New MySqlCommand(Query, con)
+                dt = New DataTable()
+                dt.Columns.Clear()
+                dt.Clear()
+                con.Open()
+                dt.Load(cmd.ExecuteReader())
+                con.Close()
+                If dt.Rows.Count > 0 Then
+                    ddlIteration.DataSource = dt
+                    ddlIteration.DataValueField = "IterationID"
+                    ddlIteration.DataTextField = "Iteration"
+                    ddlIteration.DataBind()
+                    ddlIteration.Items.Insert(0, "--Select--")
+                Else
+                    ddlIteration.Items.Clear()
+                    ddlIteration.Items.Insert(0, "--Select--")
+                    ddlIteration.SelectedIndex = 0
+                End If
+            Catch ex As Exception
+                dvMsg.Visible = True
+                lblMsg.Text = ex.Message
+            End Try
+        Else
+            ddlIteration.Items.Clear()
+            ddlIteration.Items.Insert(0, "--Select--")
+            ddlIteration.SelectedIndex = 0
+        End If
     End Sub
 End Class

@@ -29,7 +29,9 @@
                             <a href="#" class="nav-link dropdown-toggle" style="color: white; font-weight: bold;" data-toggle="dropdown">Admin</a>
                             <div class="dropdown-menu">
                                 <a href="MstProjects.aspx" class="dropdown-item">Projects</a>
-                                <a href="MstPhase.aspx" class="dropdown-item">Phase</a>
+                                <a href="MstStage.aspx" class="dropdown-item">Stage</a>
+                                <a href="MstSteps.aspx" class="dropdown-item">Steps</a>
+                                <a href="MstIteration.aspx" class="dropdown-item">Iteration</a>
                                 <a href="MstStatus.aspx" class="dropdown-item">Status</a>
                                 <a href="MstUsers.aspx" class="dropdown-item">Users</a>
                             </div>
@@ -60,18 +62,18 @@
             </div>
             <br />
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Search :
                 </div>
-                <div class="form-group col-md-5">
-                    <asp:TextBox ID="txtSearch" runat="server"  CssClass="form-control" placeholder="Search By- Id / Title / Project / Phase / Status / Assigned To"></asp:TextBox>
+                <div class="form-group col-md-8">
+                    <asp:TextBox ID="txtSearch" runat="server"  CssClass="form-control" placeholder="Search By - Id / Title / Project / Stage / Step / Iteration / Status / Assigned To"></asp:TextBox>
                 </div>
             </div>
 
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Project :
@@ -80,14 +82,26 @@
                     <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control"></asp:DropDownList>
                 </div>
                 <div class="form-group col-md-1">
-                    Phase :
+                    Stage :
                 </div>
                 <div class="form-group col-md-2">
-                    <asp:DropDownList ID="ddlPhase" runat="server" CssClass="form-control"></asp:DropDownList>
+                    <asp:DropDownList ID="ddlStage" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlStage_SelectedIndexChanged" ></asp:DropDownList>
+                </div>
+                 <div class="form-group col-md-1">
+                    Step :
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:DropDownList ID="ddlStep" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlStep_SelectedIndexChanged"></asp:DropDownList>
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
+                </div>
+                  <div class="form-group col-md-1">
+                    Iteration :
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:DropDownList ID="ddlIteration" runat="server" CssClass="form-control"></asp:DropDownList>
                 </div>
                 <div class="form-group col-md-1">
                     Status :
@@ -103,7 +117,7 @@
                 </div>
             </div>
             <div class="form-row">
-                 <div class="form-group col-md-5"> 
+                 <div class="form-group col-md-4"> 
                 </div>
                 <div class="form-group col-md-2" align="right">
                     <asp:Button ID="btnSearch" runat="server" CssClass="btn btn-sm btn-primary" OnClick="btnSearch_Click" Text="Search" />
@@ -138,9 +152,9 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
-                                <asp:TemplateField HeaderText="Phase" SortExpression="Phase" ItemStyle-Width="180px">
+                                <asp:TemplateField HeaderText="Stage" SortExpression="Stage" ItemStyle-Width="180px">
                                     <ItemTemplate>
-                                        <asp:Label ID="lblPhase" runat="server" Text='<%#Eval("Phase") %>'></asp:Label>
+                                        <asp:Label ID="lblStage" runat="server" Text='<%#Eval("Stage") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Assigned To" SortExpression="AssignedToUser" ItemStyle-Width="180px">

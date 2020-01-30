@@ -11,7 +11,7 @@ Option Strict On
 Option Explicit On
 
 
-Partial Public Class MstPhase
+Partial Public Class MstSteps
     
     '''<summary>
     '''form1 control.
@@ -86,13 +86,31 @@ Partial Public Class MstPhase
     Protected WithEvents Label1 As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''txtPhase control.
+    '''ddlStage control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtPhase As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents ddlStage As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''RequiredFieldValidator2 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RequiredFieldValidator2 As Global.System.Web.UI.WebControls.RequiredFieldValidator
+    
+    '''<summary>
+    '''txtStep control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtStep As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
     '''reqProjects control.
@@ -149,11 +167,11 @@ Partial Public Class MstPhase
     Protected WithEvents PnlGrid As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
-    '''gvPhase control.
+    '''gvStep control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents gvPhase As Global.System.Web.UI.WebControls.GridView
+    Protected WithEvents gvStep As Global.System.Web.UI.WebControls.GridView
 End Class

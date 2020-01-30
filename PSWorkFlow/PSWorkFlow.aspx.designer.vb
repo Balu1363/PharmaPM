@@ -113,13 +113,31 @@ Partial Public Class PSWorkFlow
     Protected WithEvents ddlProject As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
-    '''ddlPhase control.
+    '''ddlStage control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlPhase As Global.System.Web.UI.WebControls.DropDownList
+    Protected WithEvents ddlStage As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''ddlStep control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddlStep As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''ddlIteration control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddlIteration As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
     '''ddlStatus control.

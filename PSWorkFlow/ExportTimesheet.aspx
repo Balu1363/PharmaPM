@@ -27,7 +27,9 @@
                             <a href="#" class="nav-link dropdown-toggle text-white font-weight-bold" data-toggle="dropdown">Admin</a>
                             <div class="dropdown-menu">
                                 <a href="MstProjects.aspx" class="dropdown-item">Projects</a>
-                                <a href="MstPhase.aspx" class="dropdown-item">Phase</a>
+                                <a href="MstStage.aspx" class="dropdown-item">Stage</a>
+                                <a href="MstSteps.aspx" class="dropdown-item">Steps</a>
+                                <a href="MstIteration.aspx" class="dropdown-item">Iteration</a>
                                 <a href="MstStatus.aspx" class="dropdown-item">Status</a>
                                 <a href="MstUsers.aspx" class="dropdown-item">Users</a>
                             </div>

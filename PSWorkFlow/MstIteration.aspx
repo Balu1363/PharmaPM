@@ -1,4 +1,4 @@
-﻿<%@ Page Language="vb" AutoEventWireup="false" CodeBehind="MstPhase.aspx.vb" Inherits="PSWorkFlow.MstPhase" %>
+﻿<%@ Page Language="vb" AutoEventWireup="false" CodeBehind="MstIteration.aspx.vb" Inherits="PSWorkFlow.MstIteration" %>
 
 <!DOCTYPE html>
 
@@ -27,7 +27,9 @@
                             <a href="#" class="nav-link dropdown-toggle" style="color: white; font-weight: bold; border-bottom-style: solid; padding-bottom: 1px" data-toggle="dropdown">Admin</a>
                             <div class="dropdown-menu">
                                 <a href="MstProjects.aspx" class="dropdown-item">Projects</a>
-                                <a href="MstPhase.aspx" class="dropdown-item">Phase</a>
+                                <a href="MstStage.aspx" class="dropdown-item">Stage</a>
+                                <a href="MstSteps.aspx" class="dropdown-item">Steps</a>
+                                <a href="MstIteration.aspx" class="dropdown-item">Iteration</a>
                                 <a href="MstStatus.aspx" class="dropdown-item">Status</a>
                                 <a href="MstUsers.aspx" class="dropdown-item">Users</a>
                             </div>
@@ -37,8 +39,9 @@
                     <ul class="navbar-nav navbar-right">
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold">
                             <asp:Label ID="lblEmpName" runat="server" Text="" ForeColor="White" Font-Bold="true"></asp:Label></a></li>
-                       <%-- <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Login.aspx">Logout</a></li>--%>
-                        <li class="nav-item"><asp:LinkButton ID="lnkLogout" runat="server" Text="Logout" CssClass="nav-link text-white font-weight-bold" OnClick="lnkLogout_Click"></asp:LinkButton></li>
+                        <%-- <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Login.aspx">Logout</a></li>--%>
+                        <li class="nav-item">
+                            <asp:LinkButton ID="lnkLogout" runat="server" Text="Logout" CssClass="nav-link text-white font-weight-bold" OnClick="lnkLogout_Click"></asp:LinkButton></li>
                     </ul>
                 </div>
             </div>
@@ -48,31 +51,59 @@
                 <div class="form-group col-md-12 alert-info" runat="server" id="dvMsgSuccess" align="center">
                     <asp:Label ID="lblMsgSuccess" runat="server" Text=""></asp:Label>
                 </div>
-                 <div class="form-group col-md-12 alert-danger" runat="server" id="dvMsg" align="center">
+                <div class="form-group col-md-12 alert-danger" runat="server" id="dvMsg" align="center">
                     <asp:Label ID="lblMsg" runat="server" Text=""></asp:Label>
                 </div>
             </div>
-             <div style="height:5px"></div>
+            <div style="height: 5px"></div>
             <div class="form-row">
                 <div class="form-group col-md-12">
                     <div class="form-row">
                         <div class="form-group col-md-3">
                         </div>
                         <div class="form-group col-md-5 alert-info">
-                            <asp:Label ID="Label1" runat="server" Font-Bold="true" ForeColor="#007bff" Text="Phase"></asp:Label>
+                            <asp:Label ID="Label1" runat="server" Font-Bold="true" ForeColor="#007bff" Text="Iteration"></asp:Label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                        </div>
+                        <div class="form-group col-md-1">
+                            Stage :
+                        </div>
+                        <div class="form-group col-md-2">
+                            <asp:DropDownList ID="ddlStage" runat="server" CssClass="form-control" ValidationGroup="a" OnSelectedIndexChanged="ddlStage_SelectedIndexChanged" AutoPostBack="true"></asp:DropDownList>
+                        </div>
+                        <div class="form-group col-md-1">
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" SetFocusOnError="true" Text="*" InitialValue="--Select--" ForeColor="Red" ControlToValidate="ddlStage" ErrorMessage="*" ValidationGroup="a"></asp:RequiredFieldValidator>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-4">
                         </div>
                         <div class="form-group col-md-1">
-                            Phase:
+                            Step :
                         </div>
                         <div class="form-group col-md-2">
-                            <asp:TextBox ID="txtPhase" runat="server" MaxLength="100" CssClass="form-control" ValidationGroup="a"></asp:TextBox>
+                            <asp:DropDownList ID="ddlStep" runat="server" CssClass="form-control" ValidationGroup="a"></asp:DropDownList>
                         </div>
                         <div class="form-group col-md-1">
-                            <asp:RequiredFieldValidator ID="reqProjects" runat="server" SetFocusOnError="true" Text="*" ForeColor="Red" ControlToValidate="txtPhase" ErrorMessage="*" ValidationGroup="a"></asp:RequiredFieldValidator>
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" SetFocusOnError="true" Text="*" InitialValue="--Select--" ForeColor="Red" ControlToValidate="ddlStep" ErrorMessage="*" ValidationGroup="a"></asp:RequiredFieldValidator>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                        </div>
+                        <div class="form-group col-md-1">
+                            Iteration :
+                        </div>
+                        <div class="form-group col-md-2">
+                            <asp:TextBox ID="txtIteration" runat="server" MaxLength="100" CssClass="form-control" ValidationGroup="a"></asp:TextBox>
+                        </div>
+                        <div class="form-group col-md-1">
+                            <asp:RequiredFieldValidator ID="reqProjects" runat="server" SetFocusOnError="true" Text="*" ForeColor="Red" ControlToValidate="txtIteration" ErrorMessage="*" ValidationGroup="a"></asp:RequiredFieldValidator>
                         </div>
                     </div>
                     <div class="form-row">
@@ -103,9 +134,9 @@
                         </div>
                         <div class="col-md-5">
                             <asp:Panel ID="PnlGrid" runat="server" ScrollBars="Auto">
-                                <asp:GridView ID="gvPhase" runat="server" AutoGenerateColumns="false" Width="100%" HeaderStyle-BackColor="#d1ecf1"
-                                    CssClass="table table-sm table-striped table-bordered table-hover" HeaderStyle-ForeColor="#007bff" OnRowCommand="gvPhase_RowCommand" OnRowUpdating="gvPhase_RowUpdating"
-                                    OnRowDeleting="gvPhase_RowDeleting" OnRowEditing="gvPhase_RowEditing">
+                                <asp:GridView ID="gvIteration" runat="server" AutoGenerateColumns="false" Width="100%" HeaderStyle-BackColor="#d1ecf1"
+                                    CssClass="table table-sm table-striped table-bordered table-hover" HeaderStyle-ForeColor="#007bff" OnRowCommand="gvIteration_RowCommand" OnRowUpdating="gvIteration_RowUpdating"
+                                    OnRowDeleting="gvIteration_RowDeleting" OnRowEditing="gvIteration_RowEditing">
                                     <Columns>
                                         <asp:TemplateField ItemStyle-Width="15px">
                                             <ItemTemplate>
@@ -114,20 +145,45 @@
                                         </asp:TemplateField>
                                         <asp:TemplateField ItemStyle-Width="15px">
                                             <ItemTemplate>
-                                                <asp:LinkButton ID="btndelete" runat="server" CommandName="Delete" CausesValidation="false" OnClientClick="return confirm('Are you sure you want to delete this Phase?')"><img src="../Images/delete.png" height="15px" width="15px"/></asp:LinkButton>
+                                                <asp:LinkButton ID="btndelete" runat="server" CommandName="Delete" CausesValidation="false" OnClientClick="return confirm('Are you sure you want to delete this Iteration?')"><img src="../Images/delete.png" height="15px" width="15px"/></asp:LinkButton>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="PhaseID" Visible="false">
+                                       
+                                        <asp:TemplateField HeaderText="StageID" Visible="false">
                                             <ItemTemplate>
-                                                <asp:Label ID="lblPhaseID" runat="server" Text='<%#Eval("PhaseID") %>'></asp:Label>
+                                                <asp:Label ID="lblStageID" runat="server" Text='<%#Eval("StageID") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Phase">
+                                         <asp:TemplateField HeaderText="StepID" Visible="false">
                                             <ItemTemplate>
-                                                <asp:Label ID="lblPhase" runat="server" Text='<%#Eval("Phase") %>'></asp:Label>
+                                                <asp:Label ID="lblStepID" runat="server" Text='<%#Eval("StepID") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                          <asp:TemplateField HeaderText="Order" ItemStyle-Width="25px">
+                                         <asp:TemplateField HeaderText="IterationID" Visible="false">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblIterationID" runat="server" Text='<%#Eval("IterationID") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+
+
+                                        <asp:TemplateField HeaderText="Stage">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblStage" runat="server" Text='<%#Eval("Stage") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Step">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblStep" runat="server" Text='<%#Eval("Step") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                         <asp:TemplateField HeaderText="Iteration">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblIteration" runat="server" Text='<%#Eval("Iteration") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+
+                                        
+                                        <asp:TemplateField HeaderText="Order" ItemStyle-Width="25px">
                                             <ItemTemplate>
                                                 <asp:Label ID="lblOrd" runat="server" Text='<%#Eval("Ord") %>'></asp:Label>
                                             </ItemTemplate>
@@ -143,4 +199,3 @@
     </form>
 </body>
 </html>
-

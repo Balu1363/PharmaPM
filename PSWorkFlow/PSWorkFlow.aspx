@@ -27,7 +27,9 @@
                             <a href="#" class="nav-link dropdown-toggle" style="color: white; font-weight: bold;" data-toggle="dropdown">Admin</a>
                             <div class="dropdown-menu">
                                 <a href="MstProjects.aspx" class="dropdown-item">Projects</a>
-                                <a href="MstPhase.aspx" class="dropdown-item">Phase</a>
+                                <a href="MstStage.aspx" class="dropdown-item">Stage</a>
+                                <a href="MstSteps.aspx" class="dropdown-item">Steps</a>
+                                <a href="MstIteration.aspx" class="dropdown-item">Iteration</a>
                                 <a href="MstStatus.aspx" class="dropdown-item">Status</a>
                                 <a href="MstUsers.aspx" class="dropdown-item">Users</a>
                             </div>
@@ -38,7 +40,8 @@
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold">
                             <asp:Label ID="lblEmpName" runat="server" Text="" ForeColor="White" Font-Bold="true"></asp:Label></a></li>
                         <%--<li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Login.aspx">Logout</a></li>--%>
-                        <li class="nav-item"><asp:LinkButton ID="lnkLogout" runat="server" Text="Logout" CssClass="nav-link text-white font-weight-bold" OnClick="lnkLogout_Click"></asp:LinkButton></li>
+                        <li class="nav-item">
+                            <asp:LinkButton ID="lnkLogout" runat="server" Text="Logout" CssClass="nav-link text-white font-weight-bold" OnClick="lnkLogout_Click"></asp:LinkButton></li>
                     </ul>
                 </div>
             </div>
@@ -61,69 +64,78 @@
                 </div>
             </div>--%>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Title
                     <asp:Label ID="lblId" runat="server" Font-Bold="true" Text=""></asp:Label>
                     :
                 </div>
-                <div class="form-group col-md-5">
+                <div class="form-group col-md-8">
                     <asp:TextBox ID="txtTitle" runat="server" MaxLength="100" CssClass="form-control" ValidationGroup="a"></asp:TextBox>
                 </div>
-                 <div class="form-group col-md-1">
-                    <small style="color:red">*</small>
+                <div class="form-group col-md-1">
+                    <small style="color: red">*</small>
                 </div>
 
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Project :
                 </div>
                 <div class="form-group col-md-2">
-                    <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control" ValidationGroup="a"></asp:DropDownList>
+                    <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control" ></asp:DropDownList>
                 </div>
                 <div class="form-group col-md-1">
-                    Phase :
+                    Stage :
                 </div>
                 <div class="form-group col-md-2">
-                    <asp:DropDownList ID="ddlPhase" runat="server" CssClass="form-control" ValidationGroup="a"></asp:DropDownList>
+                    <asp:DropDownList ID="ddlStage" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlStage_SelectedIndexChanged"></asp:DropDownList>
+                </div>
+                <div class="form-group col-md-1">
+                    Step :
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:DropDownList ID="ddlStep" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlStep_SelectedIndexChanged"></asp:DropDownList>
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
+                </div>
+                 <div class="form-group col-md-1">
+                    Iteration :
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:DropDownList ID="ddlIteration" runat="server" CssClass="form-control"></asp:DropDownList>
                 </div>
                 <div class="form-group col-md-1">
                     Status :
                 </div>
                 <div class="form-group col-md-2">
-                    <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control" ValidationGroup="a"></asp:DropDownList>
+                    <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control"></asp:DropDownList>
                 </div>
                 <div class="form-group col-md-1">
                     Assigned To :
                 </div>
                 <div class="form-group col-md-2">
-                    <asp:DropDownList ID="ddlAssignedTo" runat="server" CssClass="form-control" ValidationGroup="a"></asp:DropDownList>
+                    <asp:DropDownList ID="ddlAssignedTo" runat="server" CssClass="form-control"></asp:DropDownList>
                 </div>
-                <%--<div class="form-group col-md-1">
-                    <small style="color:red">*</small>
-                </div>--%>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Note:
                 </div>
-                <div class="form-group col-md-5">
-                    <asp:TextBox ID="txtNotes" runat="server" MaxLength="100" CssClass="form-control" Rows="4" TextMode="MultiLine" ValidationGroup="a"></asp:TextBox>
+                <div class="form-group col-md-8">
+                    <asp:TextBox ID="txtNotes" runat="server" MaxLength="100" CssClass="form-control" Rows="4" TextMode="MultiLine"></asp:TextBox>
                 </div>
 
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Attachment :
@@ -135,13 +147,11 @@
 
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
-                </div>
-                <div class="form-group col-md-1">
+                <div class="form-group col-md-4">
                 </div>
                 <div class="form-group col-md-2">
                     <asp:Button ID="btnSubmit" runat="server"
-                        Text="Submit" CssClass="btn btn-sm btn-primary" ValidationGroup="a" OnClick="btnSubmit_Click" />
+                        Text="Submit" CssClass="btn btn-sm btn-primary" OnClick="btnSubmit_Click" />
                     <asp:Button ID="btnCancel" runat="server"
                         Text="Clear" CssClass="btn btn-sm btn-primary" OnClick="btnCancel_Click" />
                 </div>

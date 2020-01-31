@@ -166,6 +166,7 @@
     <Content Include="Global.asax" />
     <Content Include="Images\delete.png" />
     <Content Include="Images\edit.jpg" />
+    <Content Include="Images\ganttchart.png" />
     <Content Include="Login.aspx" />
     <Content Include="MstStage.aspx" />
     <Content Include="MstProjects.aspx" />
@@ -182,6 +183,7 @@
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
     <None Include="My Project\PublishProfiles\PSPublish.pubxml" />
+    <Content Include="Report.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -377,6 +379,13 @@
     </Compile>
     <Compile Include="PSWorkFlowView.aspx.vb">
       <DependentUpon>PSWorkFlowView.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="Report.aspx.designer.vb">
+      <DependentUpon>Report.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Report.aspx.vb">
+      <DependentUpon>Report.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
   </ItemGroup>

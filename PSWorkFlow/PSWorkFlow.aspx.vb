@@ -28,7 +28,7 @@ Public Class PSWorkFlow
                     showadmin.Visible = False
                 End If
                 BindDDLProject()
-                BindDDLStage()
+                ddlStage.Items.Insert(0, "--Select--")
                 ddlStep.Items.Insert(0, "--Select--")
                 ddlIteration.Items.Insert(0, "--Select--")
                 BindDDLAssignTo()
@@ -49,6 +49,7 @@ Public Class PSWorkFlow
         End If
     End Sub
 
+    'Bind WorkFlow Controls
     Private Sub BindWorkFlow()
         Try
             Dim sb As StringBuilder = New StringBuilder()
@@ -73,27 +74,28 @@ Public Class PSWorkFlow
                 If checkProject.ToString().Length > 0 Then
                     ddlProject.SelectedValue = Convert.ToInt32(dtp.Rows(0)("ProjID"))
                 End If
+
                 Dim checkStageID As String
                 checkStageID = Convert.ToString(dtp.Rows(0)("StageID"))
                 If checkStageID.ToString().Length > 0 Then
+                    BindDDLStage()
                     ddlStage.SelectedValue = Convert.ToInt32(dtp.Rows(0)("StageID"))
-                    If ddlStage.SelectedIndex > 0 Then
-                        Dim checkStepID As String
-                        checkStepID = Convert.ToString(dtp.Rows(0)("StepID"))
-                        If checkStepID.ToString().Length > 0 Then
-                            BindStep()
-                            ddlStep.SelectedValue = Convert.ToInt32(dtp.Rows(0)("StepID"))
-                            If ddlStep.SelectedIndex > 0 Then
-                                Dim checkIterationID As String
-                                checkIterationID = Convert.ToString(dtp.Rows(0)("IterationID"))
-                                If checkIterationID.ToString().Length > 0 Then
-                                    BindIteration()
-                                    ddlIteration.SelectedValue = Convert.ToInt32(dtp.Rows(0)("IterationID"))
-                                End If
-                            End If
-                        End If
-                    End If
                 End If
+
+                Dim checkStepID As String
+                checkStepID = Convert.ToString(dtp.Rows(0)("StepID"))
+                If checkStepID.ToString().Length > 0 Then
+                    BindStep()
+                    ddlStep.SelectedValue = Convert.ToInt32(dtp.Rows(0)("StepID"))
+                End If
+
+                Dim checkIterationID As String
+                checkIterationID = Convert.ToString(dtp.Rows(0)("IterationID"))
+                If checkIterationID.ToString().Length > 0 Then
+                    BindIteration()
+                    ddlIteration.SelectedValue = Convert.ToInt32(dtp.Rows(0)("IterationID"))
+                End If
+
                 Dim checkAssign As String
                 checkAssign = Convert.ToString(dtp.Rows(0)("AssignedTo"))
                 If checkAssign.ToString().Length > 0 Then
@@ -531,7 +533,19 @@ Public Class PSWorkFlow
     Private Sub ClearControls()
         txtTitle.Text = String.Empty
         ddlProject.SelectedIndex = 0
+
+        ddlStage.Items.Clear()
+        ddlStage.Items.Insert(0, "--Select--")
         ddlStage.SelectedIndex = 0
+
+        ddlStep.Items.Clear()
+        ddlStep.Items.Insert(0, "--Select--")
+        ddlStep.SelectedIndex = 0
+
+        ddlIteration.Items.Clear()
+        ddlIteration.Items.Insert(0, "--Select--")
+        ddlIteration.SelectedIndex = 0
+
         ddlAssignedTo.SelectedIndex = 0
         ddlStatus.SelectedIndex = 0
         txtNotes.Text = String.Empty
@@ -610,7 +624,7 @@ Public Class PSWorkFlow
         Try
             Dim Query As String
             dt.Clear()
-            Query = "Select StageID,Stage from Stage where Status=true Order By Ord"
+            Query = "Select StageID,Stage from Stage where Status=true and ProjID=" & ddlProject.SelectedValue & " Order By Ord"
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(Query, con)
             dt = New DataTable()
@@ -711,7 +725,18 @@ Public Class PSWorkFlow
     End Sub
 
     Protected Sub ddlStage_SelectedIndexChanged(sender As Object, e As EventArgs)
-        BindStep()
+        If ddlStage.SelectedIndex > 0 Then
+            BindStep()
+        Else
+            ddlStep.Items.Clear()
+            ddlStep.Items.Insert(0, "--Select--")
+            ddlStep.SelectedIndex = 0
+
+            ddlIteration.Items.Clear()
+            ddlIteration.Items.Insert(0, "--Select--")
+            ddlIteration.SelectedIndex = 0
+        End If
+
     End Sub
 
     Private Sub BindStep()
@@ -719,7 +744,7 @@ Public Class PSWorkFlow
             Try
                 Dim Query As String
                 dt.Clear()
-                Query = "Select StepID,Step from Steps where Status=true and StageID=" & ddlStage.SelectedValue & " Order By Ord"
+                Query = "Select StepID,Step from Steps where Status=true and ProjID=" & ddlProject.SelectedValue & " and StageID=" & ddlStage.SelectedValue & " Order By Ord"
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(Query, con)
                 dt = New DataTable()
@@ -755,7 +780,13 @@ Public Class PSWorkFlow
     End Sub
 
     Protected Sub ddlStep_SelectedIndexChanged(sender As Object, e As EventArgs)
-        BindIteration()
+        If ddlStep.SelectedIndex > 0 Then
+            BindIteration()
+        Else
+            ddlIteration.Items.Clear()
+            ddlIteration.Items.Insert(0, "--Select--")
+            ddlIteration.SelectedIndex = 0
+        End If
     End Sub
 
     Private Sub BindIteration()
@@ -763,7 +794,7 @@ Public Class PSWorkFlow
             Try
                 Dim Query As String
                 dt.Clear()
-                Query = "Select IterationID,Iteration from Iteration where Status=true and StageID=" & ddlStage.SelectedValue & " and StepID=" & ddlStep.SelectedValue & " Order By Ord"
+                Query = "Select IterationID,Iteration from Iteration where Status=true and ProjID=" & ddlProject.SelectedValue & " and StageID=" & ddlStage.SelectedValue & " and StepID=" & ddlStep.SelectedValue & " Order By Ord"
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(Query, con)
                 dt = New DataTable()
@@ -788,6 +819,24 @@ Public Class PSWorkFlow
                 lblMsg.Text = ex.Message
             End Try
         Else
+            ddlIteration.Items.Clear()
+            ddlIteration.Items.Insert(0, "--Select--")
+            ddlIteration.SelectedIndex = 0
+        End If
+    End Sub
+
+    Protected Sub ddlProject_SelectedIndexChanged(sender As Object, e As EventArgs)
+        If ddlProject.SelectedIndex > 0 Then
+            BindDDLStage()
+        Else
+            ddlStage.Items.Clear()
+            ddlStage.Items.Insert(0, "--Select--")
+            ddlStage.SelectedIndex = 0
+
+            ddlStep.Items.Clear()
+            ddlStep.Items.Insert(0, "--Select--")
+            ddlStep.SelectedIndex = 0
+
             ddlIteration.Items.Clear()
             ddlIteration.Items.Insert(0, "--Select--")
             ddlIteration.SelectedIndex = 0

@@ -18,7 +18,9 @@ Public Class MstIteration
                 lblMsgSuccess.Visible = False
                 dvMsg.Visible = False
                 lblMsg.Visible = False
-                BindDDLStage()
+                BindDDLProject()
+                ddlStage.Items.Insert(0, "--Select--")
+                ddlStep.Items.Insert(0, "--Select--")
                 BindIteration()
             End If
         End If
@@ -28,7 +30,7 @@ Public Class MstIteration
         Try
             Dim Query As String
             dt.Clear()
-            Query = "Select StageID,Stage from Stage where Status=true Order By Ord"
+            Query = "Select StageID,Stage from Stage where Status=true and ProjID=" & ddlProject.SelectedValue & " Order By Ord"
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(Query, con)
             dt = New DataTable()
@@ -57,7 +59,7 @@ Public Class MstIteration
     Private Sub BindIteration()
         Try
             Dim sb As StringBuilder = New StringBuilder()
-            sb.Append("Select i.StageID,sg.Stage,i.StepID,st.Step,i.IterationID,i.Iteration,i.Ord from Iteration i inner join Stage sg on i.StageID=sg.StageID inner join steps st on i.StepID=st.StepID Where i.Status=@Status")
+            sb.Append("Select i.ProjID,p.ProjName,i.StageID,sg.Stage,i.StepID,st.Step,i.IterationID,i.Iteration,i.Ord from Iteration i inner join Stage sg on i.StageID=sg.StageID inner join steps st on i.StepID=st.StepID inner join Projects p on i.ProjID=p.ProjID Where i.Status=@Status")
             sb.Append(" Order By Ord;")
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(sb.ToString(), con)
@@ -94,7 +96,7 @@ Public Class MstIteration
             Try
                 Dim Query As String
                 dt.Clear()
-                Query = "Select StepID,Step from Steps where Status=true and StageID=" & ddlStage.SelectedValue & " Order By Ord"
+                Query = "Select StepID,Step from Steps where Status=true and ProjID=" & ddlProject.SelectedValue & " and StageID=" & ddlStage.SelectedValue & " Order By Ord"
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(Query, con)
                 dt = New DataTable()
@@ -136,11 +138,12 @@ Public Class MstIteration
             End If
             If btnSave.Text = "Save" Then
                 Dim sbInsert As StringBuilder = New StringBuilder()
-                sbInsert.Append(" Insert Into Iteration (Iteration,StageID,StepID,Status,Ord) ")
-                sbInsert.Append(" Values (@Iteration,@StageID,@StepID,@Status,@Ord)")
+                sbInsert.Append(" Insert Into Iteration (Iteration,ProjID,StageID,StepID,Status,Ord) ")
+                sbInsert.Append(" Values (@Iteration,@ProjID,@StageID,@StepID,@Status,@Ord)")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sbInsert.ToString(), con)
                 cmd.Parameters.AddWithValue("@Iteration", txtIteration.Text.Trim())
+                cmd.Parameters.AddWithValue("@ProjID", ddlProject.SelectedValue)
                 cmd.Parameters.AddWithValue("@StageID", ddlStage.SelectedValue)
                 cmd.Parameters.AddWithValue("@StepID", ddlStep.SelectedValue)
                 cmd.Parameters.AddWithValue("@Status", True)
@@ -156,10 +159,11 @@ Public Class MstIteration
                 lblMsgSuccess.Text = "Iteration saved successfully."
             ElseIf btnSave.Text = "Update" Then
                 Dim sb As StringBuilder = New StringBuilder()
-                sb.Append(" Update Iteration Set Iteration=@Iteration,StageID=@StageID,StepID=@StepID,Ord=@Ord Where IterationID=@IterationID")
+                sb.Append(" Update Iteration Set Iteration=@Iteration,ProjID=@ProjID,StageID=@StageID,StepID=@StepID,Ord=@Ord Where IterationID=@IterationID")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sb.ToString(), con)
                 cmd.Parameters.AddWithValue("@Iteration", txtIteration.Text.Trim())
+                cmd.Parameters.AddWithValue("@ProjID", ddlProject.SelectedValue)
                 cmd.Parameters.AddWithValue("@StageID", ddlStage.SelectedValue)
                 cmd.Parameters.AddWithValue("@StepID", ddlStep.SelectedValue)
                 cmd.Parameters.AddWithValue("@Ord", txtOrder.Text.Trim())
@@ -176,6 +180,7 @@ Public Class MstIteration
                     BindIteration()
                 End If
             End If
+            ddlProject.SelectedIndex = 0
             txtIteration.Text = String.Empty
             ddlStage.SelectedIndex = 0
             ddlStep.SelectedIndex = 0
@@ -187,6 +192,7 @@ Public Class MstIteration
     End Sub
 
     Protected Sub btnCancel_Click(sender As Object, e As EventArgs)
+        ddlProject.SelectedIndex = 0
         ddlStage.SelectedIndex = 0
         ddlStep.SelectedIndex = 0
         txtIteration.Text = String.Empty
@@ -213,12 +219,17 @@ Public Class MstIteration
 
                 Dim RowIndex As Integer = row.RowIndex
                 Dim lblIterationID As Label = CType(gvIteration.Rows(RowIndex).FindControl("lblIterationID"), Label)
+                Dim lblProjID As Label = CType(gvIteration.Rows(RowIndex).FindControl("lblProjID"), Label)
                 Dim lblStageID As Label = CType(gvIteration.Rows(RowIndex).FindControl("lblStageID"), Label)
                 Dim lblStepID As Label = CType(gvIteration.Rows(RowIndex).FindControl("lblStepID"), Label)
                 Dim lblIteration As Label = CType(gvIteration.Rows(RowIndex).FindControl("lblIteration"), Label)
                 Dim lblOrd As Label = CType(gvIteration.Rows(RowIndex).FindControl("lblOrd"), Label)
                 ViewState("IterationID") = lblIterationID.Text
-                ddlStage.SelectedValue = lblStageID.Text
+                ddlProject.SelectedValue = lblProjID.Text
+                If ddlProject.SelectedValue > 0 Then
+                    BindDDLStage()
+                    ddlStage.SelectedValue = lblStageID.Text
+                End If
                 If ddlStage.SelectedIndex > 0 Then
                     BindStep()
                     ddlStep.SelectedValue = lblStepID.Text
@@ -265,5 +276,44 @@ Public Class MstIteration
         Session.Abandon()
         Session("EmpId") = Nothing
         Response.Redirect("~/Login.aspx")
+    End Sub
+
+    Protected Sub ddlProject_SelectedIndexChanged(sender As Object, e As EventArgs)
+        If ddlProject.SelectedIndex > 0 Then
+            BindDDLStage()
+        Else
+            ddlStage.Items.Clear()
+            ddlStage.Items.Insert(0, "--Select--")
+            ddlStage.SelectedIndex = 0
+        End If
+    End Sub
+    Private Sub BindDDLProject()
+        Try
+            Dim Query As String
+            dt.Clear()
+            Query = "Select ProjID,ProjName from Projects where Status=true Order By Ord;"
+            con = New MySqlConnection(conString)
+            cmd = New MySqlCommand(Query, con)
+            dt = New DataTable()
+            dt.Columns.Clear()
+            dt.Clear()
+            con.Open()
+            dt.Load(cmd.ExecuteReader())
+            con.Close()
+            If dt.Rows.Count > 0 Then
+                ddlProject.DataSource = dt
+                ddlProject.DataValueField = "ProjID"
+                ddlProject.DataTextField = "ProjName"
+                ddlProject.DataBind()
+                ddlProject.Items.Insert(0, "--Select--")
+            Else
+                ddlProject.Items.Clear()
+                ddlProject.Items.Insert(0, "--Select--")
+                ddlProject.SelectedIndex = 0
+            End If
+        Catch ex As Exception
+            dvMsg.Visible = True
+            lblMsg.Text = ex.Message
+        End Try
     End Sub
 End Class

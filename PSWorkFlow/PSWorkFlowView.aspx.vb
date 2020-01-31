@@ -24,7 +24,7 @@ Public Class PSWorkFlowView
                     showadmin.Visible = False
                 End If
                 BindDDLProject()
-                BindDDLStage()
+                ddlStage.Items.Insert(0, "--Select--")
                 ddlStep.Items.Insert(0, "--Select--")
                 ddlIteration.Items.Insert(0, "--Select--")
                 BindDDLStatus()
@@ -108,7 +108,7 @@ Public Class PSWorkFlowView
         Try
             Dim Query As String
             dt.Clear()
-            Query = "Select StageID,Stage from Stage where Status=true Order By Ord"
+            Query = "Select StageID,Stage from Stage where Status=true and ProjID=" & ddlProject.SelectedValue & " Order By Ord"
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(Query, con)
             dt = New DataTable()
@@ -170,15 +170,21 @@ Public Class PSWorkFlowView
             lblMsg.Visible = False
             Dim sb As StringBuilder = New StringBuilder()
             dt.Clear()
-            sb.Append("Select * from (Select w.WorkFlowId,w.ProjID,w.StageID,w.AssignedTo,w.StatusID,w.Title,p.ProjName,ph.Stage,concat(e.EmpFirst, ' ', e.EmpLast) as AssignedToUser,s.Status,DATE_FORMAT(CONVERT_TZ(w.dt,'-1:30','+12:00'), '%m/%d/%Y %l:%i %p') as Updated,")
-            sb.Append(" concat(w.WorkFlowId,' ',w.Title,' ',IF(p.ProjName IS NULL or p.ProjName = '', 'null', p.ProjName),' ',IF(ph.Stage IS NULL or ph.Stage = '', 'null', ph.Stage),' ',concat(e.EmpFirst, ' ', e.EmpLast),' ',IF(s.Status IS NULL or s.Status = '', 'null', s.Status)) as searchby ")
-            sb.Append(" from WorkFlow w left outer join Projects p on p.ProjID=w.ProjID left outer join Stage ph on ph.StageID=w.StageID   left outer join Status s on s.StatusID=w.StatusID ")
+            sb.Append("Select * from (Select w.WorkFlowId,w.ProjID,w.StageID,w.StepID,w.IterationID,w.AssignedTo,w.StatusID,w.Title,p.ProjName,ph.Stage,st.Step,i.Iteration,concat(e.EmpFirst, ' ', e.EmpLast) as AssignedToUser,s.Status,DATE_FORMAT(CONVERT_TZ(w.dt,'-1:30','+12:00'), '%m/%d/%Y %l:%i %p') as Updated,")
+            sb.Append(" concat(w.WorkFlowId,' ',w.Title,' ',IF(p.ProjName IS NULL or p.ProjName = '', 'null', p.ProjName),' ',IF(ph.Stage IS NULL or ph.Stage = '', 'null', ph.Stage),' ',IF(st.Step IS NULL or st.Step = '', 'null', st.Step),' ',IF(i.Iteration IS NULL or i.Iteration = '', 'null', i.Iteration),' ',concat(e.EmpFirst, ' ', e.EmpLast),' ',IF(s.Status IS NULL or s.Status = '', 'null', s.Status)) as searchby ")
+            sb.Append(" from WorkFlow w left outer join Projects p on p.ProjID=w.ProjID left outer join Stage ph on ph.StageID=w.StageID left outer join Steps st on st.StepID=w.StepID left outer join Iteration i on i.IterationID=w.IterationID left outer join Status s on s.StatusID=w.StatusID ")
             sb.Append(" left outer join Employees e on e.EmpID=w.AssignedTo order by w.WorkFlowId desc) tbl where WorkFlowId IS Not NULL ")
             If ddlProject.SelectedIndex > 0 Then
                 sb.Append(" And ProjID =" & ddlProject.SelectedValue & "")
             End If
             If ddlStage.SelectedIndex > 0 Then
                 sb.Append(" And StageID =" & ddlStage.SelectedValue & "")
+            End If
+            If ddlStep.SelectedIndex > 0 Then
+                sb.Append(" And StepID =" & ddlStep.SelectedValue & "")
+            End If
+            If ddlIteration.SelectedIndex > 0 Then
+                sb.Append(" And IterationID =" & ddlIteration.SelectedValue & "")
             End If
             If Role = "Admin" Then
                 If ddlAssignedTo.SelectedIndex > 0 Then
@@ -288,14 +294,37 @@ Public Class PSWorkFlowView
     Protected Sub btnClear_Click(sender As Object, e As EventArgs)
         txtSearch.Text = String.Empty
         ddlProject.SelectedIndex = 0
+
+        ddlStage.Items.Clear()
+        ddlStage.Items.Insert(0, "--Select--")
         ddlStage.SelectedIndex = 0
+
+        ddlStep.Items.Clear()
+        ddlStep.Items.Insert(0, "--Select--")
+        ddlStep.SelectedIndex = 0
+
+        ddlIteration.Items.Clear()
+        ddlIteration.Items.Insert(0, "--Select--")
+        ddlIteration.SelectedIndex = 0
+
         ddlStatus.SelectedIndex = 0
         ddlAssignedTo.SelectedIndex = 0
         BindGrid()
     End Sub
 
     Protected Sub ddlStage_SelectedIndexChanged(sender As Object, e As EventArgs)
-        BindStep()
+        If ddlStage.SelectedIndex > 0 Then
+            BindStep()
+        Else
+            ddlStep.Items.Clear()
+            ddlStep.Items.Insert(0, "--Select--")
+            ddlStep.SelectedIndex = 0
+
+            ddlIteration.Items.Clear()
+            ddlIteration.Items.Insert(0, "--Select--")
+            ddlIteration.SelectedIndex = 0
+        End If
+
     End Sub
 
     Private Sub BindStep()
@@ -303,7 +332,7 @@ Public Class PSWorkFlowView
             Try
                 Dim Query As String
                 dt.Clear()
-                Query = "Select StepID,Step from Steps where Status=true and StageID=" & ddlStage.SelectedValue & " Order By Ord"
+                Query = "Select StepID,Step from Steps where Status=true and ProjID=" & ddlProject.SelectedValue & " and StageID=" & ddlStage.SelectedValue & " Order By Ord"
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(Query, con)
                 dt = New DataTable()
@@ -339,7 +368,13 @@ Public Class PSWorkFlowView
     End Sub
 
     Protected Sub ddlStep_SelectedIndexChanged(sender As Object, e As EventArgs)
-        BindIteration()
+        If ddlStep.SelectedIndex > 0 Then
+            BindIteration()
+        Else
+            ddlIteration.Items.Clear()
+            ddlIteration.Items.Insert(0, "--Select--")
+            ddlIteration.SelectedIndex = 0
+        End If
     End Sub
 
     Private Sub BindIteration()
@@ -347,7 +382,7 @@ Public Class PSWorkFlowView
             Try
                 Dim Query As String
                 dt.Clear()
-                Query = "Select IterationID,Iteration from Iteration where Status=true and StageID=" & ddlStage.SelectedValue & " and StepID=" & ddlStep.SelectedValue & " Order By Ord"
+                Query = "Select IterationID,Iteration from Iteration where Status=true and ProjID=" & ddlProject.SelectedValue & " and StageID=" & ddlStage.SelectedValue & " and StepID=" & ddlStep.SelectedValue & " Order By Ord"
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(Query, con)
                 dt = New DataTable()
@@ -372,6 +407,24 @@ Public Class PSWorkFlowView
                 lblMsg.Text = ex.Message
             End Try
         Else
+            ddlIteration.Items.Clear()
+            ddlIteration.Items.Insert(0, "--Select--")
+            ddlIteration.SelectedIndex = 0
+        End If
+    End Sub
+
+    Protected Sub ddlProject_SelectedIndexChanged(sender As Object, e As EventArgs)
+        If ddlProject.SelectedIndex > 0 Then
+            BindDDLStage()
+        Else
+            ddlStage.Items.Clear()
+            ddlStage.Items.Insert(0, "--Select--")
+            ddlStage.SelectedIndex = 0
+
+            ddlStep.Items.Clear()
+            ddlStep.Items.Insert(0, "--Select--")
+            ddlStep.SelectedIndex = 0
+
             ddlIteration.Items.Clear()
             ddlIteration.Items.Insert(0, "--Select--")
             ddlIteration.SelectedIndex = 0

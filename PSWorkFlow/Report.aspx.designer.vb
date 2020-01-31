@@ -11,7 +11,7 @@ Option Strict On
 Option Explicit On
 
 
-Partial Public Class MstStage
+Partial Public Class Report
     
     '''<summary>
     '''form1 control.
@@ -39,24 +39,6 @@ Partial Public Class MstStage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lnkLogout As Global.System.Web.UI.WebControls.LinkButton
-    
-    '''<summary>
-    '''dvMsgSuccess control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents dvMsgSuccess As Global.System.Web.UI.HtmlControls.HtmlGenericControl
-    
-    '''<summary>
-    '''lblMsgSuccess control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblMsgSuccess As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
     '''dvMsg control.
@@ -95,24 +77,6 @@ Partial Public Class MstStage
     Protected WithEvents ddlProject As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
-    '''RequiredFieldValidator2 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents RequiredFieldValidator2 As Global.System.Web.UI.WebControls.RequiredFieldValidator
-    
-    '''<summary>
-    '''txtStage control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents txtStage As Global.System.Web.UI.WebControls.TextBox
-    
-    '''<summary>
     '''reqProjects control.
     '''</summary>
     '''<remarks>
@@ -122,56 +86,20 @@ Partial Public Class MstStage
     Protected WithEvents reqProjects As Global.System.Web.UI.WebControls.RequiredFieldValidator
     
     '''<summary>
-    '''txtOrder control.
+    '''lblName control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtOrder As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents lblName As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''RequiredFieldValidator1 control.
+    '''imgGanttChart control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents RequiredFieldValidator1 As Global.System.Web.UI.WebControls.RequiredFieldValidator
-    
-    '''<summary>
-    '''btnSave control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents btnSave As Global.System.Web.UI.WebControls.Button
-    
-    '''<summary>
-    '''btnCancel control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents btnCancel As Global.System.Web.UI.WebControls.Button
-    
-    '''<summary>
-    '''PnlGrid control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents PnlGrid As Global.System.Web.UI.WebControls.Panel
-    
-    '''<summary>
-    '''gvStage control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents gvStage As Global.System.Web.UI.WebControls.GridView
+    Protected WithEvents imgGanttChart As Global.System.Web.UI.WebControls.Image
 End Class

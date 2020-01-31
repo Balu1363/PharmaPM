@@ -19,15 +19,47 @@ Public Class MstStage
                 lblMsgSuccess.Visible = False
                 dvMsg.Visible = False
                 lblMsg.Visible = False
+                BindDDLProject()
                 BindProjectStage()
             End If
         End If
     End Sub
 
+    Private Sub BindDDLProject()
+        Try
+            Dim Query As String
+            dt.Clear()
+            Query = "Select ProjID,ProjName from Projects where Status=true Order By Ord;"
+            con = New MySqlConnection(conString)
+            cmd = New MySqlCommand(Query, con)
+            dt = New DataTable()
+            dt.Columns.Clear()
+            dt.Clear()
+            con.Open()
+            dt.Load(cmd.ExecuteReader())
+            con.Close()
+            If dt.Rows.Count > 0 Then
+                ddlProject.DataSource = dt
+                ddlProject.DataValueField = "ProjID"
+                ddlProject.DataTextField = "ProjName"
+                ddlProject.DataBind()
+                ddlProject.Items.Insert(0, "--Select--")
+            Else
+                ddlProject.Items.Clear()
+                ddlProject.Items.Insert(0, "--Select--")
+                ddlProject.SelectedIndex = 0
+            End If
+        Catch ex As Exception
+            dvMsg.Visible = True
+            lblMsg.Text = ex.Message
+        End Try
+    End Sub
+
+
     Private Sub BindProjectStage()
         Try
             Dim sb As StringBuilder = New StringBuilder()
-            sb.Append("Select StageID,Stage,Ord from Stage Where Status=@Status")
+            sb.Append("Select s.StageID,s.Stage,s.ProjID,p.ProjName,s.Ord from Stage s inner join Projects p on s.ProjID=p.ProjID Where s.Status=@Status")
             sb.Append(" Order By Ord;")
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(sb.ToString(), con)
@@ -58,6 +90,7 @@ Public Class MstStage
 
 
     Protected Sub btnCancel_Click(sender As Object, e As EventArgs)
+        ddlProject.SelectedIndex = 0
         txtStage.Text = String.Empty
         txtOrder.Text = String.Empty
         dvMsgSuccess.Visible = False
@@ -78,10 +111,11 @@ Public Class MstStage
             End If
             If btnSave.Text = "Save" Then
                 Dim sbInsert As StringBuilder = New StringBuilder()
-                sbInsert.Append(" Insert Into Stage (Stage, Status,Ord) ")
-                sbInsert.Append(" Values (@Stage,@Status,@Ord)")
+                sbInsert.Append(" Insert Into Stage (Stage,ProjID,Status,Ord) ")
+                sbInsert.Append(" Values (@Stage,@ProjID,@Status,@Ord)")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sbInsert.ToString(), con)
+                cmd.Parameters.AddWithValue("@ProjID", ddlProject.SelectedValue)
                 cmd.Parameters.AddWithValue("@Stage", txtStage.Text.Trim())
                 cmd.Parameters.AddWithValue("@Status", True)
                 cmd.Parameters.AddWithValue("@Ord", txtOrder.Text.Trim())
@@ -96,9 +130,10 @@ Public Class MstStage
                 lblMsgSuccess.Text = "Stage saved successfully."
             ElseIf btnSave.Text = "Update" Then
                 Dim sb As StringBuilder = New StringBuilder()
-                sb.Append(" Update Stage Set Stage=@Stage,Ord=@Ord Where StageID=@StageID")
+                sb.Append(" Update Stage Set Stage=@Stage,ProjID=@ProjID,Ord=@Ord Where StageID=@StageID")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sb.ToString(), con)
+                cmd.Parameters.AddWithValue("@ProjID", ddlProject.SelectedValue)
                 cmd.Parameters.AddWithValue("@Stage", txtStage.Text.Trim())
                 cmd.Parameters.AddWithValue("@Ord", txtOrder.Text.Trim())
                 cmd.Parameters.AddWithValue("@StageID", ViewState("StageID"))
@@ -114,6 +149,7 @@ Public Class MstStage
                     BindProjectStage()
                 End If
             End If
+            ddlProject.SelectedIndex = 0
             txtStage.Text = String.Empty
             txtOrder.Text = String.Empty
         Catch ex As Exception
@@ -130,8 +166,10 @@ Public Class MstStage
                 Dim RowIndex As Integer = row.RowIndex
                 Dim lblStageID As Label = CType(gvStage.Rows(RowIndex).FindControl("lblStageID"), Label)
                 Dim lblStage As Label = CType(gvStage.Rows(RowIndex).FindControl("lblStage"), Label)
+                Dim lblProjID As Label = CType(gvStage.Rows(RowIndex).FindControl("lblProjID"), Label)
                 Dim lblOrd As Label = CType(gvStage.Rows(RowIndex).FindControl("lblOrd"), Label)
                 ViewState("StageID") = lblStageID.Text
+                ddlProject.SelectedValue = lblProjID.Text
                 txtStage.Text = Convert.ToString(lblStage.Text)
                 txtOrder.Text = Convert.ToString(lblOrd.Text)
                 btnSave.Text = "Update"

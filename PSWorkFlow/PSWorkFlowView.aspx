@@ -24,8 +24,12 @@
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlow.aspx">Add</a></li>
                         <li class="nav-item"><a class="nav-link" style="color: white; font-weight: bold; border-bottom-style: solid; padding-bottom: 1px" href="PSWorkFlowView.aspx">View</a></li>
                         <%--<li class="nav-item"><a class="nav-link text-white font-weight-bold" href="MstProjects.aspx">Admin</a></li>--%>
-
-                        <li class="nav-item dropdown" runat="server" id="showadmin">
+                       
+                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="ExportTimesheet.aspx">Timesheet</a></li>
+                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Report.aspx">Reports</a></li>
+                    </ul>
+                    <ul class="navbar-nav navbar-right">
+                         <li class="nav-item dropdown" runat="server" id="showadmin">
                             <a href="#" class="nav-link dropdown-toggle" style="color: white; font-weight: bold;" data-toggle="dropdown">Admin</a>
                             <div class="dropdown-menu">
                                 <a href="MstProjects.aspx" class="dropdown-item">Projects</a>
@@ -36,9 +40,6 @@
                                 <a href="MstUsers.aspx" class="dropdown-item">Users</a>
                             </div>
                         </li>
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="ExportTimesheet.aspx">Export Timesheet</a></li>
-                    </ul>
-                    <ul class="navbar-nav navbar-right">
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold">
                             <asp:Label ID="lblEmpName" runat="server" Text="" ForeColor="White" Font-Bold="true"></asp:Label></a></li>
                         <%--<li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Login.aspx">Logout</a></li>--%>
@@ -62,46 +63,50 @@
             </div>
             <br />
             <div class="form-row">
-                <div class="form-group col-md-1">
+                <div class="form-group col-md-3">
                 </div>
                 <div class="form-group col-md-1">
                     Search :
                 </div>
-                <div class="form-group col-md-8">
-                    <asp:TextBox ID="txtSearch" runat="server"  CssClass="form-control" placeholder="Search By - Id / Title / Project / Stage / Step / Iteration / Status / Assigned To"></asp:TextBox>
+                <div class="form-group col-md-5">
+                    <asp:TextBox ID="txtSearch" runat="server" CssClass="form-control" placeholder="Search By - Id / Title / Project / Stage / Step / Iteration / Status / Assigned To"></asp:TextBox>
                 </div>
             </div>
 
             <div class="form-row">
-                <div class="form-group col-md-1">
+                <div class="form-group col-md-3">
                 </div>
                 <div class="form-group col-md-1">
                     Project :
                 </div>
                 <div class="form-group col-md-2">
-                    <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control"></asp:DropDownList>
+                    <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlProject_SelectedIndexChanged"></asp:DropDownList>
                 </div>
                 <div class="form-group col-md-1">
                     Stage :
                 </div>
                 <div class="form-group col-md-2">
-                    <asp:DropDownList ID="ddlStage" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlStage_SelectedIndexChanged" ></asp:DropDownList>
+                    <asp:DropDownList ID="ddlStage" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlStage_SelectedIndexChanged"></asp:DropDownList>
                 </div>
-                 <div class="form-group col-md-1">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                </div>
+                <div class="form-group col-md-1">
                     Step :
                 </div>
                 <div class="form-group col-md-2">
                     <asp:DropDownList ID="ddlStep" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlStep_SelectedIndexChanged"></asp:DropDownList>
                 </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group col-md-1">
-                </div>
-                  <div class="form-group col-md-1">
                     Iteration :
                 </div>
                 <div class="form-group col-md-2">
                     <asp:DropDownList ID="ddlIteration" runat="server" CssClass="form-control"></asp:DropDownList>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3">
                 </div>
                 <div class="form-group col-md-1">
                     Status :
@@ -117,7 +122,7 @@
                 </div>
             </div>
             <div class="form-row">
-                 <div class="form-group col-md-4"> 
+                <div class="form-group col-md-4">
                 </div>
                 <div class="form-group col-md-2" align="right">
                     <asp:Button ID="btnSearch" runat="server" CssClass="btn btn-sm btn-primary" OnClick="btnSearch_Click" Text="Search" />
@@ -157,6 +162,17 @@
                                         <asp:Label ID="lblStage" runat="server" Text='<%#Eval("Stage") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
+                                 <asp:TemplateField HeaderText="Step" SortExpression="Step" ItemStyle-Width="180px">
+                                    <ItemTemplate>
+                                        <asp:Label ID="lblStep" runat="server" Text='<%#Eval("Step") %>'></asp:Label>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                                 <asp:TemplateField HeaderText="Iteration" SortExpression="Iteration" ItemStyle-Width="180px">
+                                    <ItemTemplate>
+                                        <asp:Label ID="lblIteration" runat="server" Text='<%#Eval("Iteration") %>'></asp:Label>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
                                 <asp:TemplateField HeaderText="Assigned To" SortExpression="AssignedToUser" ItemStyle-Width="180px">
                                     <ItemTemplate>
                                         <asp:Label ID="lblAssignedTo" runat="server" Text='<%#Eval("AssignedToUser") %>'></asp:Label>

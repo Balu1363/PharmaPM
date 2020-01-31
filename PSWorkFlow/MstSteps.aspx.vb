@@ -17,7 +17,8 @@ Public Class MstSteps
                 lblMsgSuccess.Visible = False
                 dvMsg.Visible = False
                 lblMsg.Visible = False
-                BindDDLStage()
+                BindDDLProject()
+                ddlStage.Items.Insert(0, "--Select--")
                 BindProjectStep()
             End If
         End If
@@ -27,7 +28,7 @@ Public Class MstSteps
         Try
             Dim Query As String
             dt.Clear()
-            Query = "Select StageID,Stage from Stage where Status=true Order By Ord"
+            Query = "Select StageID,Stage from Stage where Status=true and ProjID=" & ddlProject.SelectedValue & " Order By Ord"
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(Query, con)
             dt = New DataTable()
@@ -56,7 +57,7 @@ Public Class MstSteps
     Private Sub BindProjectStep()
         Try
             Dim sb As StringBuilder = New StringBuilder()
-            sb.Append("Select st.StageID,sg.Stage,st.StepID,st.Step,st.Ord from Stage sg inner join steps st on sg.StageID=st.StageID Where st.Status=@Status")
+            sb.Append("Select st.ProjID,p.ProjName,st.StageID,sg.Stage,st.StepID,st.Step,st.Ord from Stage sg inner join steps st on sg.StageID=st.StageID inner join Projects p on st.ProjID=p.ProjID Where st.Status=@Status")
             sb.Append(" Order By Ord;")
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(sb.ToString(), con)
@@ -96,10 +97,11 @@ Public Class MstSteps
             End If
             If btnSave.Text = "Save" Then
                 Dim sbInsert As StringBuilder = New StringBuilder()
-                sbInsert.Append(" Insert Into Steps (Step,StageID,Status,Ord) ")
-                sbInsert.Append(" Values (@Step,@StageID,@Status,@Ord)")
+                sbInsert.Append(" Insert Into Steps (Step,ProjID,StageID,Status,Ord) ")
+                sbInsert.Append(" Values (@Step,@ProjID,@StageID,@Status,@Ord)")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sbInsert.ToString(), con)
+                cmd.Parameters.AddWithValue("@ProjID", ddlProject.SelectedValue)
                 cmd.Parameters.AddWithValue("@Step", txtStep.Text.Trim())
                 cmd.Parameters.AddWithValue("@StageID", ddlStage.SelectedValue)
                 cmd.Parameters.AddWithValue("@Status", True)
@@ -115,10 +117,11 @@ Public Class MstSteps
                 lblMsgSuccess.Text = "Step saved successfully."
             ElseIf btnSave.Text = "Update" Then
                 Dim sb As StringBuilder = New StringBuilder()
-                sb.Append(" Update steps Set Step=@Step,StageID=@StageID,Ord=@Ord Where StepID=@StepID")
+                sb.Append(" Update steps Set Step=@Step,ProjID=@ProjID,StageID=@StageID,Ord=@Ord Where StepID=@StepID")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sb.ToString(), con)
                 cmd.Parameters.AddWithValue("@Step", txtStep.Text.Trim())
+                cmd.Parameters.AddWithValue("@ProjID", ddlProject.SelectedValue)
                 cmd.Parameters.AddWithValue("@StageID", ddlStage.SelectedValue)
                 cmd.Parameters.AddWithValue("@Ord", txtOrder.Text.Trim())
                 cmd.Parameters.AddWithValue("@StepID", ViewState("StepID"))
@@ -134,6 +137,7 @@ Public Class MstSteps
                     BindProjectStep()
                 End If
             End If
+            ddlProject.SelectedIndex = 0
             txtStep.Text = String.Empty
             ddlStage.SelectedIndex = 0
             txtOrder.Text = String.Empty
@@ -144,6 +148,7 @@ Public Class MstSteps
     End Sub
 
     Protected Sub btnCancel_Click(sender As Object, e As EventArgs)
+        ddlProject.SelectedIndex = 0
         ddlStage.SelectedIndex = 0
         txtStep.Text = String.Empty
         txtOrder.Text = String.Empty
@@ -168,11 +173,17 @@ Public Class MstSteps
                 Dim row As GridViewRow = CType(((CType(e.CommandSource, LinkButton)).NamingContainer), GridViewRow)
                 Dim RowIndex As Integer = row.RowIndex
                 Dim lblStepID As Label = CType(gvStep.Rows(RowIndex).FindControl("lblStepID"), Label)
+                Dim lblProjID As Label = CType(gvStep.Rows(RowIndex).FindControl("lblProjID"), Label)
                 Dim lblStageID As Label = CType(gvStep.Rows(RowIndex).FindControl("lblStageID"), Label)
                 Dim lblStep As Label = CType(gvStep.Rows(RowIndex).FindControl("lblStep"), Label)
                 Dim lblOrd As Label = CType(gvStep.Rows(RowIndex).FindControl("lblOrd"), Label)
                 ViewState("StepID") = lblStepID.Text
-                ddlStage.SelectedValue = lblStageID.Text
+                ddlProject.SelectedValue = lblProjID.Text
+                If ddlProject.SelectedValue > 0 Then
+                    BindDDLStage()
+                    ddlStage.SelectedValue = lblStageID.Text
+                End If
+
                 txtStep.Text = Convert.ToString(lblStep.Text)
                 txtOrder.Text = Convert.ToString(lblOrd.Text)
                 btnSave.Text = "Update"
@@ -215,5 +226,45 @@ Public Class MstSteps
         Session.Abandon()
         Session("EmpId") = Nothing
         Response.Redirect("~/Login.aspx")
+    End Sub
+
+    Protected Sub ddlProject_SelectedIndexChanged(sender As Object, e As EventArgs)
+        If ddlProject.SelectedIndex > 0 Then
+            BindDDLStage()
+        Else
+            ddlStage.Items.Clear()
+            ddlStage.Items.Insert(0, "--Select--")
+            ddlStage.SelectedIndex = 0
+        End If
+    End Sub
+
+    Private Sub BindDDLProject()
+        Try
+            Dim Query As String
+            dt.Clear()
+            Query = "Select ProjID,ProjName from Projects where Status=true Order By Ord;"
+            con = New MySqlConnection(conString)
+            cmd = New MySqlCommand(Query, con)
+            dt = New DataTable()
+            dt.Columns.Clear()
+            dt.Clear()
+            con.Open()
+            dt.Load(cmd.ExecuteReader())
+            con.Close()
+            If dt.Rows.Count > 0 Then
+                ddlProject.DataSource = dt
+                ddlProject.DataValueField = "ProjID"
+                ddlProject.DataTextField = "ProjName"
+                ddlProject.DataBind()
+                ddlProject.Items.Insert(0, "--Select--")
+            Else
+                ddlProject.Items.Clear()
+                ddlProject.Items.Insert(0, "--Select--")
+                ddlProject.SelectedIndex = 0
+            End If
+        Catch ex As Exception
+            dvMsg.Visible = True
+            lblMsg.Text = ex.Message
+        End Try
     End Sub
 End Class

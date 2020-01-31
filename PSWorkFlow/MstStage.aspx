@@ -23,7 +23,12 @@
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlow.aspx">Add</a></li>
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlowView.aspx">View</a></li>
-                        <li class="nav-item dropdown">
+                       
+                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="ExportTimesheet.aspx">Timesheet</a></li>
+                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Report.aspx">Reports</a></li>
+                    </ul>
+                    <ul class="navbar-nav navbar-right">
+                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" style="color: white; font-weight: bold; border-bottom-style: solid; padding-bottom: 1px" data-toggle="dropdown">Admin</a>
                             <div class="dropdown-menu">
                                 <a href="MstProjects.aspx" class="dropdown-item">Projects</a>
@@ -34,13 +39,11 @@
                                 <a href="MstUsers.aspx" class="dropdown-item">Users</a>
                             </div>
                         </li>
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="ExportTimesheet.aspx">Export Timesheet</a></li>
-                    </ul>
-                    <ul class="navbar-nav navbar-right">
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold">
                             <asp:Label ID="lblEmpName" runat="server" Text="" ForeColor="White" Font-Bold="true"></asp:Label></a></li>
-                       <%-- <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Login.aspx">Logout</a></li>--%>
-                        <li class="nav-item"><asp:LinkButton ID="lnkLogout" runat="server" Text="Logout" CssClass="nav-link text-white font-weight-bold" OnClick="lnkLogout_Click"></asp:LinkButton></li>
+                        <%-- <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Login.aspx">Logout</a></li>--%>
+                        <li class="nav-item">
+                            <asp:LinkButton ID="lnkLogout" runat="server" Text="Logout" CssClass="nav-link text-white font-weight-bold" OnClick="lnkLogout_Click"></asp:LinkButton></li>
                     </ul>
                 </div>
             </div>
@@ -50,11 +53,11 @@
                 <div class="form-group col-md-12 alert-info" runat="server" id="dvMsgSuccess" align="center">
                     <asp:Label ID="lblMsgSuccess" runat="server" Text=""></asp:Label>
                 </div>
-                 <div class="form-group col-md-12 alert-danger" runat="server" id="dvMsg" align="center">
+                <div class="form-group col-md-12 alert-danger" runat="server" id="dvMsg" align="center">
                     <asp:Label ID="lblMsg" runat="server" Text=""></asp:Label>
                 </div>
             </div>
-             <div style="height:5px"></div>
+            <div style="height: 5px"></div>
             <div class="form-row">
                 <div class="form-group col-md-12">
                     <div class="form-row">
@@ -62,6 +65,19 @@
                         </div>
                         <div class="form-group col-md-5 alert-info">
                             <asp:Label ID="Label1" runat="server" Font-Bold="true" ForeColor="#007bff" Text="Stage"></asp:Label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                        </div>
+                        <div class="form-group col-md-1">
+                            Project :
+                        </div>
+                        <div class="form-group col-md-2">
+                            <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control" ValidationGroup="a"></asp:DropDownList>
+                        </div>
+                         <div class="form-group col-md-1">
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" SetFocusOnError="true" Text="*" InitialValue="--Select--" ForeColor="Red" ControlToValidate="ddlProject" ErrorMessage="*" ValidationGroup="a"></asp:RequiredFieldValidator>
                         </div>
                     </div>
                     <div class="form-row">
@@ -124,12 +140,22 @@
                                                 <asp:Label ID="lblStageID" runat="server" Text='<%#Eval("StageID") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
+                                         <asp:TemplateField HeaderText="ProjID" Visible="false">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblProjID" runat="server" Text='<%#Eval("ProjID") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                         <asp:TemplateField HeaderText="Project">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblProjName" runat="server" Text='<%#Eval("ProjName") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
                                         <asp:TemplateField HeaderText="Stage">
                                             <ItemTemplate>
                                                 <asp:Label ID="lblStage" runat="server" Text='<%#Eval("Stage") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                          <asp:TemplateField HeaderText="Order" ItemStyle-Width="25px">
+                                        <asp:TemplateField HeaderText="Order" ItemStyle-Width="25px">
                                             <ItemTemplate>
                                                 <asp:Label ID="lblOrd" runat="server" Text='<%#Eval("Ord") %>'></asp:Label>
                                             </ItemTemplate>

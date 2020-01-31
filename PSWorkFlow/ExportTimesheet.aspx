@@ -23,7 +23,12 @@
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlow.aspx">Add</a></li>
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlowView.aspx">View</a></li>
-                        <li class="nav-item dropdown" runat="server" id="showadmin">
+                       
+                        <li class="nav-item"><a class="nav-link" style="color: white; font-weight: bold; border-bottom-style: solid; padding-bottom: 1px" href="ExportTimesheet.aspx">Timesheet</a></li>
+                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Report.aspx">Reports</a></li>
+                    </ul>
+                    <ul class="navbar-nav navbar-right">
+                         <li class="nav-item dropdown" runat="server" id="showadmin">
                             <a href="#" class="nav-link dropdown-toggle text-white font-weight-bold" data-toggle="dropdown">Admin</a>
                             <div class="dropdown-menu">
                                 <a href="MstProjects.aspx" class="dropdown-item">Projects</a>
@@ -34,9 +39,6 @@
                                 <a href="MstUsers.aspx" class="dropdown-item">Users</a>
                             </div>
                         </li>
-                        <li class="nav-item"><a class="nav-link" style="color: white; font-weight: bold; border-bottom-style: solid; padding-bottom: 1px" href="ExportTimesheet.aspx">Export Timesheet</a></li>
-                    </ul>
-                    <ul class="navbar-nav navbar-right">
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold">
                             <asp:Label ID="lblEmpName" runat="server" Text="" ForeColor="White" Font-Bold="true"></asp:Label></a></li>
                         <%--<li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Login.aspx">Logout</a></li>--%>
@@ -61,7 +63,7 @@
                         <div class="form-group col-md-3">
                         </div>
                         <div class="form-group col-md-5 alert-info">
-                            <asp:Label ID="Label1" runat="server" Font-Bold="true" ForeColor="#007bff" Text="Export Timesheet"></asp:Label>
+                            <asp:Label ID="Label1" runat="server" Font-Bold="true" ForeColor="#007bff" Text="Timesheet"></asp:Label>
                         </div>
                     </div>
                     <div class="form-row">

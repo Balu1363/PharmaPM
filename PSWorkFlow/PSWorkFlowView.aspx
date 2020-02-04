@@ -21,12 +21,21 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <div class="container-fluid">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlow.aspx">Add</a></li>
+                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlow.aspx" runat="server" id="showadd">Add</a></li>
                         <li class="nav-item"><a class="nav-link" style="color: white; font-weight: bold; border-bottom-style: solid; padding-bottom: 1px" href="PSWorkFlowView.aspx">View</a></li>
                         <%--<li class="nav-item"><a class="nav-link text-white font-weight-bold" href="MstProjects.aspx">Admin</a></li>--%>
                        
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="ExportTimesheet.aspx">Timesheet</a></li>
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Report.aspx">Reports</a></li>
+                       <%-- <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="ExportTimesheet.aspx">Timesheet</a></li>--%>
+                        <%--<li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Report.aspx">Reports</a></li>--%>
+
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" style="color: white; font-weight: bold;" data-toggle="dropdown">Reports</a>
+                            <div class="dropdown-menu">
+                                <a href="Report.aspx" class="dropdown-item">Gantt Charts</a>
+                                <a href="ExportTimesheet.aspx" class="dropdown-item">Timesheet</a>     
+                            </div>
+                        </li>
+
                     </ul>
                     <ul class="navbar-nav navbar-right">
                          <li class="nav-item dropdown" runat="server" id="showadmin">
@@ -63,34 +72,40 @@
             </div>
             <br />
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
-                    Search :
+                    Search:
                 </div>
-                <div class="form-group col-md-5">
+                <div class="form-group col-md-8">
                     <asp:TextBox ID="txtSearch" runat="server" CssClass="form-control" placeholder="Search By - Id / Title / Project / Stage / Step / Iteration / Status / Assigned To"></asp:TextBox>
                 </div>
             </div>
 
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
-                    Project :
+                    Project:
                 </div>
                 <div class="form-group col-md-2">
                     <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlProject_SelectedIndexChanged"></asp:DropDownList>
                 </div>
                 <div class="form-group col-md-1">
-                    Stage :
+                    Stage:
                 </div>
                 <div class="form-group col-md-2">
                     <asp:DropDownList ID="ddlStage" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlStage_SelectedIndexChanged"></asp:DropDownList>
                 </div>
+                <div class="form-group col-md-1">
+                    Planned Start Date:
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:TextBox ID="txtPlannedStartDt" runat="server" TextMode="Date" CssClass="form-control"></asp:TextBox>
+                </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Step :
@@ -104,9 +119,15 @@
                 <div class="form-group col-md-2">
                     <asp:DropDownList ID="ddlIteration" runat="server" CssClass="form-control"></asp:DropDownList>
                 </div>
+                 <div class="form-group col-md-1">
+                    Planned End Date:
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:TextBox ID="txtPlannedEndDt" runat="server" TextMode="Date" CssClass="form-control"></asp:TextBox>
+                </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Status :
@@ -119,6 +140,22 @@
                 </div>
                 <div class="form-group col-md-2">
                     <asp:DropDownList ID="ddlAssignedTo" runat="server" CssClass="form-control"></asp:DropDownList>
+                </div>
+                 <div class="form-group col-md-1">
+                    Actual Start Date:
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:TextBox ID="txtActualStartDt" runat="server" TextMode="Date" CssClass="form-control"></asp:TextBox>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-7">
+                </div>
+                 <div class="form-group col-md-1">
+                    Actual End Date:
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:TextBox ID="txtActualEndDate" runat="server" TextMode="Date" CssClass="form-control"></asp:TextBox>
                 </div>
             </div>
             <div class="form-row">
@@ -144,46 +181,71 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
-                                <asp:TemplateField HeaderText="Title" SortExpression="Title">
+                                <asp:TemplateField HeaderText="Title" SortExpression="Title" ItemStyle-Width="300px">
                                     <ItemTemplate>
                                         <asp:Label ID="lblTitle" Visible="false" runat="server" Text='<%#Eval("Title") %>'></asp:Label>
                                         <asp:LinkButton ID="btnedit" runat="server" Text='<%#Eval("Title") %>' CommandName="Edit" CausesValidation="false"></asp:LinkButton>
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
-                                <asp:TemplateField HeaderText="Project" SortExpression="ProjName" ItemStyle-Width="180px">
+                                <asp:TemplateField HeaderText="Project" SortExpression="ProjName">
                                     <ItemTemplate>
                                         <asp:Label ID="lblProjName" runat="server" Text='<%#Eval("ProjName") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
-                                <asp:TemplateField HeaderText="Stage" SortExpression="Stage" ItemStyle-Width="180px">
+                                <asp:TemplateField HeaderText="Stage" SortExpression="Stage">
                                     <ItemTemplate>
                                         <asp:Label ID="lblStage" runat="server" Text='<%#Eval("Stage") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                 <asp:TemplateField HeaderText="Step" SortExpression="Step" ItemStyle-Width="180px">
+                                 <asp:TemplateField HeaderText="Step" SortExpression="Step">
                                     <ItemTemplate>
                                         <asp:Label ID="lblStep" runat="server" Text='<%#Eval("Step") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                 <asp:TemplateField HeaderText="Iteration" SortExpression="Iteration" ItemStyle-Width="180px">
+                                 <asp:TemplateField HeaderText="Iteration" SortExpression="Iteration">
                                     <ItemTemplate>
                                         <asp:Label ID="lblIteration" runat="server" Text='<%#Eval("Iteration") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
-                                <asp:TemplateField HeaderText="Assigned To" SortExpression="AssignedToUser" ItemStyle-Width="180px">
+                                <asp:TemplateField HeaderText="Assigned To" SortExpression="AssignedToUser">
                                     <ItemTemplate>
                                         <asp:Label ID="lblAssignedTo" runat="server" Text='<%#Eval("AssignedToUser") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                <asp:TemplateField HeaderText="Status" SortExpression="Status" ItemStyle-Width="150px">
+
+                                 <asp:TemplateField HeaderText="Planned Start Date" SortExpression="PlannedStartDt">
+                                    <ItemTemplate>
+                                        <asp:Label ID="lblPlannedStartDt" runat="server" Text='<%#Eval("PlannedStartDt") %>'></asp:Label>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                 <asp:TemplateField HeaderText="Planned End Date" SortExpression="PlannedEndDt">
+                                    <ItemTemplate>
+                                        <asp:Label ID="lblPlannedEndDt" runat="server" Text='<%#Eval("PlannedEndDt") %>'></asp:Label>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                 <asp:TemplateField HeaderText="Actual Start Date" SortExpression="ActualStartDt">
+                                    <ItemTemplate>
+                                        <asp:Label ID="lblActualStartDt" runat="server" Text='<%#Eval("ActualStartDt") %>'></asp:Label>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                 <asp:TemplateField HeaderText="Actual End Date" SortExpression="ActualEndDate">
+                                    <ItemTemplate>
+                                        <asp:Label ID="lblActualEndDate" runat="server" Text='<%#Eval("ActualEndDate") %>'></asp:Label>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                <asp:TemplateField HeaderText="Status" SortExpression="Status">
                                     <ItemTemplate>
                                         <asp:Label ID="lblStatus" runat="server" Text='<%#Eval("Status") %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                <asp:TemplateField HeaderText="Updated" SortExpression="Updated" ItemStyle-Width="180px">
+                                <asp:TemplateField HeaderText="Updated" SortExpression="Updated">
                                     <ItemTemplate>
                                         <asp:Label ID="lblUpdated" runat="server" Text='<%#Eval("Updated") %>'></asp:Label>
                                     </ItemTemplate>

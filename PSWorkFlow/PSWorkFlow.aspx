@@ -21,11 +21,16 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <div class="container-fluid">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item"><a class="nav-link" style="color: white; font-weight: bold; border-bottom-style: solid; padding-bottom: 1px" href="PSWorkFlow.aspx">Add</a></li>
+                        <li class="nav-item"><a class="nav-link" style="color: white; font-weight: bold; border-bottom-style: solid; padding-bottom: 1px" href="PSWorkFlow.aspx" runat="server" id="showadd">Add</a></li>
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlowView.aspx">View</a></li>
                        
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="ExportTimesheet.aspx">Timesheet</a></li>
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Report.aspx">Reports</a></li>
+                       <li class="nav-item dropdown" runat="server">
+                            <a href="#" class="nav-link dropdown-toggle" style="color: white; font-weight: bold;" data-toggle="dropdown">Reports</a>
+                            <div class="dropdown-menu">
+                                <a href="Report.aspx" class="dropdown-item">Gantt Charts</a>
+                                <a href="ExportTimesheet.aspx" class="dropdown-item">Timesheet</a>     
+                            </div>
+                        </li>
                     </ul>
                     <ul class="navbar-nav navbar-right">
                          <li class="nav-item dropdown" id="showadmin" runat="server">
@@ -60,20 +65,21 @@
                 </div>
             </div>
             <br />
+            
             <%--<div class="form-row">
                 <div class="form-group col-md-12 alert-info">
                     <asp:Label ID="Label1" runat="server" Font-Bold="true" ForeColor="#007bff" Text="Add"></asp:Label>
                 </div>
             </div>--%>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Title
                     <asp:Label ID="lblId" runat="server" Font-Bold="true" Text=""></asp:Label>
                     :
                 </div>
-                <div class="form-group col-md-5">
+                <div class="form-group col-md-8">
                     <asp:TextBox ID="txtTitle" runat="server" MaxLength="100" CssClass="form-control" ValidationGroup="a"></asp:TextBox>
                 </div>
                 <div class="form-group col-md-1">
@@ -82,24 +88,30 @@
 
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
-                    Project :
+                    Project:
                 </div>
                 <div class="form-group col-md-2">
                     <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlProject_SelectedIndexChanged"></asp:DropDownList>
                 </div>
                 <div class="form-group col-md-1">
-                    Stage :
+                    Stage:
                 </div>
                 <div class="form-group col-md-2">
                     <asp:DropDownList ID="ddlStage" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlStage_SelectedIndexChanged"></asp:DropDownList>
                 </div>
+                 <div class="form-group col-md-1">
+                    Planned Start Date:
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:TextBox ID="txtPlannedStartDt" runat="server" TextMode="Date" CssClass="form-control"></asp:TextBox>
+                </div>
 
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Step :
@@ -108,14 +120,20 @@
                     <asp:DropDownList ID="ddlStep" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlStep_SelectedIndexChanged"></asp:DropDownList>
                 </div>
                 <div class="form-group col-md-1">
-                    Iteration :
+                    Iteration:
                 </div>
                 <div class="form-group col-md-2">
                     <asp:DropDownList ID="ddlIteration" runat="server" CssClass="form-control"></asp:DropDownList>
                 </div>
+                <div class="form-group col-md-1">
+                    Planned End Date:
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:TextBox ID="txtPlannedEndDt" runat="server" TextMode="Date" CssClass="form-control"></asp:TextBox>
+                </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Status :
@@ -124,14 +142,20 @@
                     <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control"></asp:DropDownList>
                 </div>
                 <div class="form-group col-md-1">
-                    Assigned To :
+                    Assigned To:
                 </div>
                 <div class="form-group col-md-2">
                     <asp:DropDownList ID="ddlAssignedTo" runat="server" CssClass="form-control"></asp:DropDownList>
                 </div>
+                <div class="form-group col-md-1">
+                    Actual Start Date:
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:TextBox ID="txtActualStartDt" runat="server" TextMode="Date" CssClass="form-control"></asp:TextBox>
+                </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
                     Note:
@@ -139,12 +163,18 @@
                 <div class="form-group col-md-5">
                     <asp:TextBox ID="txtNotes" runat="server" MaxLength="100" CssClass="form-control" Rows="4" TextMode="MultiLine"></asp:TextBox>
                 </div>
+                <div class="form-group col-md-1">
+                    Actual End Date:
+                </div>
+                <div class="form-group col-md-2">
+                    <asp:TextBox ID="txtActualEndDate" runat="server" TextMode="Date" CssClass="form-control"></asp:TextBox>
+                </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-1">
                 </div>
                 <div class="form-group col-md-1">
-                    Attachment :
+                    Attachment:
                 </div>
                 <div class="form-group col-md-2">
                     <asp:FileUpload ID="FuFile" runat="server"></asp:FileUpload>

@@ -23,6 +23,24 @@ Partial Public Class Report
     Protected WithEvents form1 As Global.System.Web.UI.HtmlControls.HtmlForm
     
     '''<summary>
+    '''showadd control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents showadd As Global.System.Web.UI.HtmlControls.HtmlAnchor
+    
+    '''<summary>
+    '''showadmin control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents showadmin As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
     '''lblEmpName control.
     '''</summary>
     '''<remarks>
@@ -84,6 +102,15 @@ Partial Public Class Report
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents reqProjects As Global.System.Web.UI.WebControls.RequiredFieldValidator
+    
+    '''<summary>
+    '''Chart1 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Chart1 As Global.System.Web.UI.DataVisualization.Charting.Chart
     
     '''<summary>
     '''lblName control.

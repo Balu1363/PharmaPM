@@ -1,5 +1,7 @@
 ﻿<%@ Page Language="vb" AutoEventWireup="false" CodeBehind="Report.aspx.vb" Inherits="PSWorkFlow.Report" %>
 
+<%@ Register Assembly="System.Web.DataVisualization, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" Namespace="System.Web.UI.DataVisualization.Charting" TagPrefix="asp" %>
+
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -21,15 +23,20 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <div class="container-fluid">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlow.aspx">Add</a></li>
+                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlow.aspx" runat="server" id="showadd">Add</a></li>
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlowView.aspx">View</a></li>
-                        
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="ExportTimesheet.aspx">Timesheet</a></li>
-                        <li class="nav-item"><a class="nav-link" style="color: white; font-weight: bold; border-bottom-style: solid; padding-bottom: 1px" href="Report.aspx">Reports</a></li>
+
+                        <li class="nav-item dropdown" runat="server">
+                            <a href="#" class="nav-link dropdown-toggle" style="color: white; font-weight: bold; border-bottom-style: solid; padding-bottom: 1px" data-toggle="dropdown">Reports</a>
+                            <div class="dropdown-menu">
+                                <a href="Report.aspx" class="dropdown-item">Gantt Charts</a>
+                                <a href="ExportTimesheet.aspx" class="dropdown-item">Timesheet</a>
+                            </div>
+                        </li>
                     </ul>
                     <ul class="navbar-nav navbar-right">
-                        <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" style="color: white; font-weight: bold; border-bottom-style: solid; padding-bottom: 1px" data-toggle="dropdown">Admin</a>
+                        <li class="nav-item dropdown" runat="server" id="showadmin">
+                            <a href="#" class="nav-link dropdown-toggle" style="color: white; font-weight: bold;" data-toggle="dropdown">Admin</a>
                             <div class="dropdown-menu">
                                 <a href="MstProjects.aspx" class="dropdown-item">Projects</a>
                                 <a href="MstStage.aspx" class="dropdown-item">Stage</a>
@@ -41,7 +48,8 @@
                         </li>
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold">
                             <asp:Label ID="lblEmpName" runat="server" Text="" ForeColor="White" Font-Bold="true"></asp:Label></a></li>
-                         <li class="nav-item"><asp:LinkButton ID="lnkLogout" runat="server" Text="Logout" CssClass="nav-link text-white font-weight-bold" OnClick="lnkLogout_Click"></asp:LinkButton></li>
+                        <li class="nav-item">
+                            <asp:LinkButton ID="lnkLogout" runat="server" Text="Logout" CssClass="nav-link text-white font-weight-bold" OnClick="lnkLogout_Click"></asp:LinkButton></li>
                     </ul>
                 </div>
             </div>
@@ -52,7 +60,7 @@
                     <asp:Label ID="lblMsg" runat="server" Text=""></asp:Label>
                 </div>
             </div>
-            <div style="height:5px"></div>
+            <div style="height: 5px"></div>
             <div class="form-row">
                 <div class="form-group col-md-12">
                     <div class="form-row">
@@ -69,18 +77,32 @@
                             Project Name:
                         </div>
                         <div class="form-group col-md-2">
-                             <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlProject_SelectedIndexChanged"></asp:DropDownList>
+                            <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlProject_SelectedIndexChanged"></asp:DropDownList>
                         </div>
                         <div class="form-group col-md-1">
                             <asp:RequiredFieldValidator ID="reqProjects" runat="server" SetFocusOnError="true" Text="*" ForeColor="Red" ControlToValidate="ddlProject" InitialValue="--Select--" ErrorMessage="*" ValidationGroup="a"></asp:RequiredFieldValidator>
                         </div>
                     </div>
-                    
-                    
+
+
                     <div class="form-row">
                         <div class="form-group col-md-2">
                         </div>
                         <div class="form-group col-md-8">
+                            <asp:Chart ID="Chart1" runat="server" Height="300px" Width="400px">
+                                <Titles>
+                                    <asp:Title ShadowOffset="3" Name="Items" />
+                                </Titles>
+                                <Legends>
+                                    <asp:Legend Alignment="Center" Docking="Bottom" IsTextAutoFit="False" Name="Default"
+                                        LegendStyle="Row" />
+                                </Legends>
+                                <ChartAreas>
+                                    <asp:ChartArea Name="ChartArea1" BorderWidth="0" />
+                                </ChartAreas>
+                            </asp:Chart>
+
+
                             <asp:Label ID="lblName" runat="server" Text="" Font-Bold="true" ForeColor="DodgerBlue"></asp:Label>
                             <asp:Image ID="imgGanttChart" runat="server" ImageUrl="~/Images/ganttchart.png" Height="450px" Width="800px" />
                         </div>

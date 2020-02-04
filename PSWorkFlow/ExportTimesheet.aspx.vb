@@ -26,10 +26,12 @@ Public Class ExportTimesheet
                 If Role = "Admin" Then
                     showadmin.Visible = True
                     showemp.Visible = True
+                    showadd.Visible = True
                     BindDDLEmployee()
                 Else
                     showemp.Visible = False
                     showadmin.Visible = False
+                    showadd.Visible = False
                 End If
             End If
         End If

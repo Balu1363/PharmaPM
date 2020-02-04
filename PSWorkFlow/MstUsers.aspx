@@ -21,11 +21,16 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <div class="container-fluid">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlow.aspx">Add</a></li>
+                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlow.aspx" runat="server" id="showadd">Add</a></li>
                         <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="PSWorkFlowView.aspx">View</a></li>
                         
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="ExportTimesheet.aspx">Timesheet</a></li>
-                        <li class="nav-item"><a class="nav-link text-white font-weight-bold" href="Report.aspx">Reports</a></li>
+                        <li class="nav-item dropdown" runat="server">
+                            <a href="#" class="nav-link dropdown-toggle" style="color: white; font-weight: bold;" data-toggle="dropdown">Reports</a>
+                            <div class="dropdown-menu">
+                                <a href="Report.aspx" class="dropdown-item">Gantt Charts</a>
+                                <a href="ExportTimesheet.aspx" class="dropdown-item">Timesheet</a>     
+                            </div>
+                        </li>
                     </ul>
                     <ul class="navbar-nav navbar-right">
                         <li class="nav-item dropdown">
@@ -111,10 +116,10 @@
                                 <asp:ListItem Text="Employee" Value="2"></asp:ListItem>
                             </asp:DropDownList>
                         </div>
-                        <div class="form-group col-md-1" id="dvpassup" runat="server">
+                        <div class="form-group col-md-1" runat="server">
                             Password:
                         </div>
-                        <div class="form-group col-md-2" id="dvpassupcont" runat="server">
+                        <div class="form-group col-md-2" runat="server">
                             <asp:TextBox ID="txtPassword" runat="server" MaxLength="100" CssClass="form-control" TextMode="Password"></asp:TextBox>
                         </div>
                     </div>

@@ -20,8 +20,10 @@ Public Class PSWorkFlowView
             If Not IsPostBack Then
                 If Role = "Admin" Then
                     showadmin.Visible = True
+                    showadd.Visible = True
                 Else
                     showadmin.Visible = False
+                    showadd.Visible = False
                 End If
                 BindDDLProject()
                 ddlStage.Items.Insert(0, "--Select--")
@@ -170,9 +172,9 @@ Public Class PSWorkFlowView
             lblMsg.Visible = False
             Dim sb As StringBuilder = New StringBuilder()
             dt.Clear()
-            sb.Append("Select * from (Select w.WorkFlowId,w.ProjID,w.StageID,w.StepID,w.IterationID,w.AssignedTo,w.StatusID,w.Title,p.ProjName,ph.Stage,st.Step,i.Iteration,concat(e.EmpFirst, ' ', e.EmpLast) as AssignedToUser,s.Status,DATE_FORMAT(CONVERT_TZ(w.dt,'-1:30','+12:00'), '%m/%d/%Y %l:%i %p') as Updated,")
-            sb.Append(" concat(w.WorkFlowId,' ',w.Title,' ',IF(p.ProjName IS NULL or p.ProjName = '', 'null', p.ProjName),' ',IF(ph.Stage IS NULL or ph.Stage = '', 'null', ph.Stage),' ',IF(st.Step IS NULL or st.Step = '', 'null', st.Step),' ',IF(i.Iteration IS NULL or i.Iteration = '', 'null', i.Iteration),' ',concat(e.EmpFirst, ' ', e.EmpLast),' ',IF(s.Status IS NULL or s.Status = '', 'null', s.Status)) as searchby ")
-            sb.Append(" from WorkFlow w left outer join Projects p on p.ProjID=w.ProjID left outer join Stage ph on ph.StageID=w.StageID left outer join Steps st on st.StepID=w.StepID left outer join Iteration i on i.IterationID=w.IterationID left outer join Status s on s.StatusID=w.StatusID ")
+            sb.Append("Select * from (Select w.WorkFlowId,w.ProjID,w.StageID,w.StepID,w.IterationID,w.AssignedTo,w.StatusID,w.Title,p.ProjName,ph.Stage,st.Step,i.Iteration,concat(e.EmpFirst, ' ', e.EmpLast) as AssignedToUser,s.Status,DATE_FORMAT(CONVERT_TZ(w.dt,'-1:30','+12:00'), '%d-%m-%Y %l:%i %p') as Updated,")
+            sb.Append(" concat(w.WorkFlowId,' ',w.Title,' ',IF(p.ProjName IS NULL or p.ProjName = '', 'null', p.ProjName),' ',IF(ph.Stage IS NULL or ph.Stage = '', 'null', ph.Stage),' ',IF(st.Step IS NULL or st.Step = '', 'null', st.Step),' ',IF(i.Iteration IS NULL or i.Iteration = '', 'null', i.Iteration),' ',concat(e.EmpFirst, ' ', e.EmpLast),' ',IF(s.Status IS NULL or s.Status = '', 'null', s.Status)) as searchby, ")
+            sb.Append(" DATE_FORMAT(PlannedStartDt,'%d-%m-%Y') PlannedStartDt,DATE_FORMAT(PlannedEndDt,'%d-%m-%Y') PlannedEndDt,DATE_FORMAT(ActualStartDt,'%d-%m-%Y') ActualStartDt,DATE_FORMAT(ActualEndDate,'%d-%m-%Y') ActualEndDate from WorkFlow w left outer join Projects p on p.ProjID=w.ProjID left outer join Stage ph on ph.StageID=w.StageID left outer join Steps st on st.StepID=w.StepID left outer join Iteration i on i.IterationID=w.IterationID left outer join Status s on s.StatusID=w.StatusID ")
             sb.Append(" left outer join Employees e on e.EmpID=w.AssignedTo order by w.WorkFlowId desc) tbl where WorkFlowId IS Not NULL ")
             If ddlProject.SelectedIndex > 0 Then
                 sb.Append(" And ProjID =" & ddlProject.SelectedValue & "")
@@ -193,9 +195,25 @@ Public Class PSWorkFlowView
             Else
                 sb.Append(" And AssignedTo= " & UserID & "")
             End If
+
+            ' Date Filters
+            If Len(txtPlannedStartDt.Text) > 0 Then
+                sb.Append(" and PlannedStartDt = '" & Convert.ToDateTime(txtPlannedStartDt.Text.Trim()).ToString("dd-MM-yyyy") & "'")
+            End If
+            If Len(txtPlannedEndDt.Text) > 0 Then
+                sb.Append(" and PlannedEndDt = '" & Convert.ToDateTime(txtPlannedEndDt.Text.Trim()).ToString("dd-MM-yyyy") & "'")
+            End If
+            If Len(txtActualStartDt.Text) > 0 Then
+                sb.Append(" and ActualStartDt = '" & Convert.ToDateTime(txtActualStartDt.Text.Trim()).ToString("dd-MM-yyyy") & "'")
+            End If
+            If Len(txtActualEndDate.Text) > 0 Then
+                sb.Append(" and ActualEndDate = '" & Convert.ToDateTime(txtActualEndDate.Text.Trim()).ToString("dd-MM-yyyy") & "'")
+            End If
+
             If Len(txtSearch.Text) > 0 Then
                 sb.Append(" and searchby like '%" & txtSearch.Text.Trim() & "%'")
             End If
+
             If ddlStatus.SelectedIndex > 0 Then
                 sb.Append(" And StatusID = " & ddlStatus.SelectedValue & "")
             Else
@@ -205,9 +223,10 @@ Public Class PSWorkFlowView
                         sb.Append(" And StatusID <> 5")
                     End If
                 Else
-                    sb.Append(" And StatusID <> 5 or StatusID is null ")
+                    sb.Append(" And (StatusID <> 5 or StatusID is null) ")
                 End If
             End If
+
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(sb.ToString(), con)
 
@@ -309,6 +328,11 @@ Public Class PSWorkFlowView
 
         ddlStatus.SelectedIndex = 0
         ddlAssignedTo.SelectedIndex = 0
+
+        txtPlannedStartDt.Text = String.Empty
+        txtPlannedEndDt.Text = String.Empty
+        txtActualStartDt.Text = String.Empty
+        txtActualEndDate.Text = String.Empty
         BindGrid()
     End Sub
 

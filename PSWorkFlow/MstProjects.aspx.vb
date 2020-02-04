@@ -8,13 +8,20 @@ Public Class MstProjects
     Dim con As MySqlConnection = New MySqlConnection()
     Dim conString As String = ConfigurationManager.ConnectionStrings("dbcNoeth").ConnectionString
     Dim UserId As Integer = 0
+    Dim Role As String = ""
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Session("EmpId") Is Nothing OrElse Session("EmpId") = "" Then
             Response.Redirect("Login.aspx")
         Else
             UserId = Session("EmpId")
+            Role = Session("Role").ToString().Trim()
             lblEmpName.Text = "User : " & Session("EmpName").ToString()
             If Not IsPostBack Then
+                If Role = "Admin" Then
+                    showadd.Visible = True
+                Else
+                    showadd.Visible = False
+                End If
                 dvMsgSuccess.Visible = False
                 lblMsgSuccess.Visible = False
                 dvMsg.Visible = False

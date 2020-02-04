@@ -7,20 +7,26 @@ Public Class MstUsers
     Dim con As MySqlConnection = New MySqlConnection()
     Dim conString As String = ConfigurationManager.ConnectionStrings("dbcNoeth").ConnectionString
     Dim UserId As Integer = 0
+    Dim Role As String = ""
+
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Session("EmpId") Is Nothing OrElse Session("EmpId") = "" Then
             Response.Redirect("Login.aspx")
         Else
             UserId = Session("EmpId")
+            Role = Session("Role").ToString().Trim()
             lblEmpName.Text = "User : " & Session("EmpName").ToString()
             If Not IsPostBack Then
+                If Role = "Admin" Then
+                    showadd.Visible = True
+                Else
+                    showadd.Visible = False
+                End If
                 dvMsgSuccess.Visible = False
                 lblMsgSuccess.Visible = False
                 dvMsg.Visible = False
                 lblMsg.Visible = False
-                dvpassup.Visible = True
-                dvpassupcont.Visible = True
                 BindUsers()
             End If
         End If
@@ -61,8 +67,6 @@ Public Class MstUsers
     Protected Sub gvUsers_RowCommand(sender As Object, e As GridViewCommandEventArgs)
         Try
             If e.CommandName = "Edit" Then
-                dvpassup.Visible = False
-                dvpassupcont.Visible = False
                 Dim row As GridViewRow = CType(((CType(e.CommandSource, LinkButton)).NamingContainer), GridViewRow)
                 Dim RowIndex As Integer = row.RowIndex
                 Dim lblEmpID As Label = CType(gvUsers.Rows(RowIndex).FindControl("lblEmpID"), Label)
@@ -81,8 +85,6 @@ Public Class MstUsers
                 Else
                     ddlRole.SelectedValue = 2
                 End If
-
-
                 btnSave.Text = "Update"
             ElseIf e.CommandName = "Delete" Then
                 Dim row As GridViewRow = CType(((CType(e.CommandSource, LinkButton)).NamingContainer), GridViewRow)
@@ -103,8 +105,6 @@ Public Class MstUsers
                     ViewState("EmpID") = Nothing
                     BindUsers()
                     btnSave.Text = "Save"
-                    dvpassup.Visible = True
-                    dvpassupcont.Visible = True
                 End If
             End If
         Catch ex As Exception
@@ -165,13 +165,14 @@ Public Class MstUsers
                 lblMsgSuccess.Text = "User saved successfully."
             ElseIf btnSave.Text = "Update" Then
                 Dim sb As StringBuilder = New StringBuilder()
-                sb.Append(" Update Employees Set EmpFirst=@EmpFirst,EmpLast=@EmpLast,EmpEmail=@EmpEmail,EmpLogin=@EmpLogin,Role=@Role Where EmpID=@EmpID")
+                sb.Append(" Update Employees Set EmpFirst=@EmpFirst,EmpLast=@EmpLast,EmpEmail=@EmpEmail,EmpLogin=@EmpLogin,EmpPass=@EmpPass,Role=@Role Where EmpID=@EmpID")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sb.ToString(), con)
                 cmd.Parameters.AddWithValue("@EmpFirst", txtFirstName.Text.Trim())
                 cmd.Parameters.AddWithValue("@EmpLast", txtLastName.Text.Trim())
                 cmd.Parameters.AddWithValue("@EmpEmail", txtEmail.Text.Trim())
                 cmd.Parameters.AddWithValue("@EmpLogin", txtUserID.Text.Trim())
+                cmd.Parameters.AddWithValue("@EmpPass", txtPassword.Text.Trim())
                 cmd.Parameters.AddWithValue("@Role", ddlRole.SelectedItem.Text.Trim())
                 cmd.Parameters.AddWithValue("@EmpID", ViewState("EmpID"))
                 con.Open()
@@ -200,8 +201,6 @@ Public Class MstUsers
         txtUserID.Text = String.Empty
         txtPassword.Text = String.Empty
         ddlRole.SelectedIndex = 0
-        dvpassup.Visible = True
-        dvpassupcont.Visible = True
         btnSave.Text = "Save"
     End Sub
     Protected Sub btnCancel_Click(sender As Object, e As EventArgs)

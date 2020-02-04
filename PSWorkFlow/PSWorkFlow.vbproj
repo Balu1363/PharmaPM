@@ -114,6 +114,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.DataVisualization" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web.DynamicData" />
@@ -289,6 +290,7 @@
       <DependentUpon>ChangePassword.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
+    <Compile Include="DAL\Gmail.vb" />
     <Compile Include="ExportTimesheet.aspx.designer.vb">
       <DependentUpon>ExportTimesheet.aspx</DependentUpon>
     </Compile>
@@ -386,7 +388,7 @@
     </Compile>
     <Compile Include="Report.aspx.vb">
       <DependentUpon>Report.aspx</DependentUpon>
-      <SubType>ASPXCodebehind</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>

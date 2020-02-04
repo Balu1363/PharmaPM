@@ -23,6 +23,15 @@ Partial Public Class PSWorkFlowView
     Protected WithEvents form1 As Global.System.Web.UI.HtmlControls.HtmlForm
     
     '''<summary>
+    '''showadd control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents showadd As Global.System.Web.UI.HtmlControls.HtmlAnchor
+    
+    '''<summary>
     '''showadmin control.
     '''</summary>
     '''<remarks>
@@ -113,6 +122,15 @@ Partial Public Class PSWorkFlowView
     Protected WithEvents ddlStage As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
+    '''txtPlannedStartDt control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtPlannedStartDt As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
     '''ddlStep control.
     '''</summary>
     '''<remarks>
@@ -131,6 +149,15 @@ Partial Public Class PSWorkFlowView
     Protected WithEvents ddlIteration As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
+    '''txtPlannedEndDt control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtPlannedEndDt As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
     '''ddlStatus control.
     '''</summary>
     '''<remarks>
@@ -147,6 +174,24 @@ Partial Public Class PSWorkFlowView
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents ddlAssignedTo As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''txtActualStartDt control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtActualStartDt As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''txtActualEndDate control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtActualEndDate As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
     '''btnSearch control.

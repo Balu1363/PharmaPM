@@ -2,6 +2,7 @@
 Imports System.IO
 
 
+
 Public Class PSWorkFlow
     Inherits System.Web.UI.Page
     Dim dt As DataTable = New DataTable()
@@ -24,8 +25,10 @@ Public Class PSWorkFlow
             If Not IsPostBack Then
                 If Role = "Admin" Then
                     showadmin.Visible = True
+                    showadd.Visible = True
                 Else
                     showadmin.Visible = False
+                    showadd.Visible = False
                 End If
                 BindDDLProject()
                 ddlStage.Items.Insert(0, "--Select--")
@@ -53,8 +56,8 @@ Public Class PSWorkFlow
     Private Sub BindWorkFlow()
         Try
             Dim sb As StringBuilder = New StringBuilder()
-            sb.Append("Select WorkFlowId,Title,ProjID,StageID,StepID,IterationID,AssignedTo,StatusID,EmpId,Dt,")
-            sb.Append(" (Select Note from Notes order by NoteId desc Limit 1) as Note From WorkFlow Where Status =@Status And WorkFlowId=@WorkFlowId")
+            sb.Append("Select WorkFlowId,Title,ProjID,StageID,StepID,IterationID,AssignedTo,StatusID,EmpId,PlannedStartDt,PlannedEndDt,ActualStartDt,ActualEndDate,")
+            sb.Append(" (Select Note from Notes order by NoteId desc Limit 1) as Note From WorkFlow Where Status=@Status And WorkFlowId=@WorkFlowId")
             con = New MySqlConnection(conString)
             cmd = New MySqlCommand(sb.ToString(), con)
             cmd.Parameters.AddWithValue("@Status", True)
@@ -108,6 +111,29 @@ Public Class PSWorkFlow
                     ddlStatus.SelectedValue = Convert.ToInt32(dtp.Rows(0)("StatusID"))
                 End If
 
+                Dim checkPlannedStartDt As String
+                checkPlannedStartDt = Convert.ToString(dtp.Rows(0)("PlannedStartDt"))
+                If checkPlannedStartDt.ToString().Length > 0 Then
+                    txtPlannedStartDt.Text = Convert.ToDateTime(dtp.Rows(0)("PlannedStartDt")).ToString("yyyy-MM-dd")
+                End If
+
+                Dim checkPlannedEndDt As String
+                checkPlannedEndDt = Convert.ToString(dtp.Rows(0)("PlannedEndDt"))
+                If checkPlannedEndDt.ToString().Length > 0 Then
+                    txtPlannedEndDt.Text = Convert.ToDateTime(dtp.Rows(0)("PlannedEndDt")).ToString("yyyy-MM-dd")
+                End If
+
+                Dim checkActualStartDt As String
+                checkActualStartDt = Convert.ToString(dtp.Rows(0)("ActualStartDt"))
+                If checkActualStartDt.ToString().Length > 0 Then
+                    txtActualStartDt.Text = Convert.ToDateTime(dtp.Rows(0)("ActualStartDt")).ToString("yyyy-MM-dd")
+                End If
+
+                Dim checkActualEndDate As String
+                checkActualEndDate = Convert.ToString(dtp.Rows(0)("ActualEndDate"))
+                If checkActualEndDate.ToString().Length > 0 Then
+                    txtActualEndDate.Text = Convert.ToDateTime(dtp.Rows(0)("ActualEndDate")).ToString("yyyy-MM-dd")
+                End If
             Else
 
             End If
@@ -127,7 +153,7 @@ Public Class PSWorkFlow
     Private Sub BindHistory()
         Try
             Dim sb As StringBuilder = New StringBuilder()
-            sb.Append("Select Notes.NoteId,  DATE_FORMAT(CONVERT_TZ(Notes.dt,'-1:30','+12:00'), '%m/%d/%Y %l:%i %p') As Dt, ")
+            sb.Append("Select Notes.NoteId,  DATE_FORMAT(CONVERT_TZ(Notes.dt,'-1:30','+12:00'), '%d-%m-%Y %l:%i %p') As Dt, ")
             sb.Append(" Notes.Note As Note, concat(Employees.EmpFirst , ' ', Employees.EmpLast) AS Employee,Attachment.FileName, Attachment.ContentType,")
             sb.Append(" Attachment.Data From notes left outer Join Employees On Employees.EmpID = Notes.EmpId left outer join Attachment on Attachment.NoteId=Notes.NoteId ")
             sb.Append(" Where Notes.WorkFlowId = @WorkFlowId")
@@ -173,11 +199,10 @@ Public Class PSWorkFlow
             '    ddlAssignedTo.Focus()
             '    Throw New Exception("Please select Assigned To to proceed.")
             'End If
-
             If btnSubmit.Text = "Submit" Then
                 Dim sbInsert As StringBuilder = New StringBuilder()
-                sbInsert.Append(" Insert Into WorkFLow (Title, ProjID, StageID, AssignedTo, StatusID,StepID,IterationID, Status, EmpId, dt) ")
-                sbInsert.Append(" Values (@Title,@ProjID,@StageID,@AssignedTo,@StatusID,@StepID,@IterationID,@Status,@EmpId,now() ); SELECT LAST_INSERT_ID() as WorkFlowId; ")
+                sbInsert.Append(" Insert Into WorkFLow (Title, ProjID, StageID, AssignedTo, StatusID,StepID,IterationID, Status, EmpId, dt,PlannedStartDt,PlannedEndDt,ActualStartDt,ActualEndDate) ")
+                sbInsert.Append(" Values (@Title,@ProjID,@StageID,@AssignedTo,@StatusID,@StepID,@IterationID,@Status,@EmpId,now(),@PlannedStartDt,@PlannedEndDt,@ActualStartDt,@ActualEndDate ); SELECT LAST_INSERT_ID() as WorkFlowId; ")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sbInsert.ToString(), con)
                 cmd.Parameters.AddWithValue("@Title", txtTitle.Text.Trim)
@@ -215,6 +240,30 @@ Public Class PSWorkFlow
                 cmd.Parameters.AddWithValue("@Status", True)
                 cmd.Parameters.AddWithValue("@EmpId", UserId)
 
+                If txtPlannedStartDt.Text.Length > 0 Then
+                    cmd.Parameters.AddWithValue("@PlannedStartDt", Convert.ToDateTime(txtPlannedStartDt.Text))
+                Else
+                    cmd.Parameters.AddWithValue("@PlannedStartDt", DBNull.Value)
+                End If
+
+                If txtPlannedEndDt.Text.Length > 0 Then
+                    cmd.Parameters.AddWithValue("@PlannedEndDt", Convert.ToDateTime(txtPlannedEndDt.Text))
+                Else
+                    cmd.Parameters.AddWithValue("@PlannedEndDt", DBNull.Value)
+                End If
+
+                If txtActualStartDt.Text.Length > 0 Then
+                    cmd.Parameters.AddWithValue("@ActualStartDt", Convert.ToDateTime(txtActualStartDt.Text))
+                Else
+                    cmd.Parameters.AddWithValue("@ActualStartDt", DBNull.Value)
+                End If
+
+                If txtActualEndDate.Text.Length > 0 Then
+                    cmd.Parameters.AddWithValue("@ActualEndDate", Convert.ToDateTime(txtActualEndDate.Text))
+                Else
+                    cmd.Parameters.AddWithValue("@ActualEndDate", DBNull.Value)
+                End If
+
                 con.Open()
                 Dim oRS1 As MySqlDataReader
                 oRS1 = cmd.ExecuteReader()
@@ -239,8 +288,8 @@ Public Class PSWorkFlow
                 InsertNote(False)
 
                 Dim sb As StringBuilder = New StringBuilder()
-                sb.Append(" Update WorkFLow Set Title=@Title,ProjID=@ProjID,StageID=@StageID, ")
-                sb.Append(" AssignedTo=@AssignedTo,StatusID=@StatusID,StepID=@StepID,IterationID=@IterationID,EmpId=@EmpId,Dt=now() Where WorkFlowId=@WorkFlowId")
+                sb.Append(" Update WorkFLow Set Title=@Title,ProjID=@ProjID,StageID=@StageID,AssignedTo=@AssignedTo,StatusID=@StatusID,StepID=@StepID,IterationID=@IterationID, ")
+                sb.Append(" EmpId=@EmpId,Dt=now(),PlannedStartDt=@PlannedStartDt,PlannedEndDt=@PlannedEndDt,ActualStartDt=@ActualStartDt,ActualEndDate=@ActualEndDate Where WorkFlowId=@WorkFlowId")
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand(sb.ToString(), con)
                 cmd.Parameters.AddWithValue("@Title", txtTitle.Text.Trim)
@@ -276,6 +325,31 @@ Public Class PSWorkFlow
                     cmd.Parameters.AddWithValue("@IterationID", DBNull.Value)
                 End If
                 cmd.Parameters.AddWithValue("@EmpId", UserId)
+
+                If txtPlannedStartDt.Text.Length > 0 Then
+                    cmd.Parameters.AddWithValue("@PlannedStartDt", Convert.ToDateTime(txtPlannedStartDt.Text))
+                Else
+                    cmd.Parameters.AddWithValue("@PlannedStartDt", DBNull.Value)
+                End If
+
+                If txtPlannedEndDt.Text.Length > 0 Then
+                    cmd.Parameters.AddWithValue("@PlannedEndDt", Convert.ToDateTime(txtPlannedEndDt.Text))
+                Else
+                    cmd.Parameters.AddWithValue("@PlannedEndDt", DBNull.Value)
+                End If
+
+                If txtActualStartDt.Text.Length > 0 Then
+                    cmd.Parameters.AddWithValue("@ActualStartDt", Convert.ToDateTime(txtActualStartDt.Text))
+                Else
+                    cmd.Parameters.AddWithValue("@ActualStartDt", DBNull.Value)
+                End If
+
+                If txtActualEndDate.Text.Length > 0 Then
+                    cmd.Parameters.AddWithValue("@ActualEndDate", Convert.ToDateTime(txtActualEndDate.Text))
+                Else
+                    cmd.Parameters.AddWithValue("@ActualEndDate", DBNull.Value)
+                End If
+
                 cmd.Parameters.AddWithValue("@WorkFlowId", _WorkFlowId)
                 con.Open()
                 Dim i As Integer = cmd.ExecuteNonQuery()
@@ -307,11 +381,13 @@ Public Class PSWorkFlow
             Dim sbNote As StringBuilder = New StringBuilder()
             Dim _NoteId As Integer
             If flag = True Then
-                If txtNotes.Text.Length > 0 Then
-                    sbNote.Append("Note :  " & txtNotes.Text & "<br/>")
-                    sbtask.Append("* Title : " & txtTitle.Text & "<br/>")
 
-                    sbtask.Append("* Link : http://pharmapm.envigil.net/PSWorkFlow.aspx?wid=" & _WorkFlowId & "  <br/>")
+                ' to select note for new note
+                If txtNotes.Text.Length > 0 Then
+                    sbNote.Append("Note   " & txtNotes.Text & "<br/>")
+                    sbtask.Append("* Title:  " & txtTitle.Text & "<br/>")
+
+                    sbtask.Append("* Link:  http://pharmapm.envigil.net/PSWorkFlow.aspx?wid=" & _WorkFlowId & "  <br/>")
                     sbtask.Append("* " & txtNotes.Text & "<br/>")
                 End If
                 If txtTitle.Text.Length > 0 Then
@@ -329,6 +405,20 @@ Public Class PSWorkFlow
                 If ddlIteration.SelectedIndex > 0 Then
                     sbNote.Append("Iteration: " & ddlIteration.SelectedItem.Text & "<br/>")
                 End If
+                ' Dates
+                If txtPlannedStartDt.Text.Length > 0 Then
+                    sbNote.Append("Planned Start Date: " & Convert.ToDateTime(txtPlannedStartDt.Text).ToString("dd-MM-yyyy") & "<br/>")
+                End If
+                If txtPlannedEndDt.Text.Length > 0 Then
+                    sbNote.Append("Planned End Date: " & Convert.ToDateTime(txtPlannedEndDt.Text).ToString("dd-MM-yyyy") & "<br/>")
+                End If
+                If txtActualStartDt.Text.Length > 0 Then
+                    sbNote.Append("Actual Start Date: " & Convert.ToDateTime(txtActualStartDt.Text).ToString("dd-MM-yyyy") & "<br/>")
+                End If
+                If txtActualEndDate.Text.Length > 0 Then
+                    sbNote.Append("Actual End Date: " & Convert.ToDateTime(txtActualEndDate.Text).ToString("dd-MM-yyyy") & "<br/>")
+                End If
+
                 If ddlAssignedTo.SelectedIndex > 0 Then
                     sbNote.Append("Assigned To: " & ddlAssignedTo.SelectedItem.Text & "<br/>")
                 End If
@@ -337,6 +427,7 @@ Public Class PSWorkFlow
                 End If
 
                 If sbtask.ToString().Length() > 0 Then
+                    ' add note for timesheet
                     con = New MySqlConnection(conString)
                     cmd = New MySqlCommand("Insert into taskdetails(WorkFlowID,Task,dt,EmpID) Values(@WorkFlowID,@Task,now(),@EmpID)", con)
                     cmd.Parameters.AddWithValue("@WorkFlowId", _WorkFlowId)
@@ -350,14 +441,46 @@ Public Class PSWorkFlow
                     cmd.ExecuteNonQuery()
                     con.Close()
                 End If
-            End If
 
+                'Email Code to Create New Ticket
+                Dim Gmail As New Gmail()
+                Dim subject As String = String.Empty
+                Dim body As String
+                subject = "Pharma PM - New Task : " + _WorkFlowId.ToString() + " - " + txtTitle.Text
+                Dim Link As String
+                Link = "http://www.pharmapm.envigil.net/PSWorkFlow.aspx?wid=" & _WorkFlowId.ToString() & ""
 
-            If flag = False Then
-                If txtNotes.Text.Length > 0 Then
-                    sbNote.Append("Note: " & txtNotes.Text & "<br/>")
+                Dim FromEmp As DataTable = New DataTable()
+                FromEmp = Employee(UserId)
+                body = "<b>Task Created by : </b>" & Convert.ToString(FromEmp.Rows(0)("EmpName")) & " <br/> <br/>" & "<b>Description : </b><br/> " & sbNote.ToString() & " <br/> <br/>" & "<b>Link :</b> " & Link
+                Gmail.MailFromName = "Pharma PM"
+                Gmail.MailFromAddress = "mail@avantienv.com"
+                Gmail.MailFromPassword = "john!manzo"
+
+                'For AssignedTo
+                Dim ToMailId As DataTable = New DataTable()
+                If ddlAssignedTo.SelectedIndex > 0 Then
+                    ToMailId = Employee(ddlAssignedTo.SelectedValue)
+                    Gmail.MailToAddress.Add(Convert.ToString(ToMailId.Rows(0)("EmpEmail")))
+                    'For  (User who create Ticket) in cc
+                    FromEmp = Employee(UserId)
+                    Gmail.MailCCAddress.Add(Convert.ToString(FromEmp.Rows(0)("EmpEmail")))
+                Else
+                    ToMailId = Employee(UserId)
+                    Gmail.MailToAddress.Add(Convert.ToString(ToMailId.Rows(0)("EmpEmail")))
                 End If
 
+                Gmail.MailSubject = subject
+                Gmail.MailBody = body.Replace(System.Environment.NewLine, "<br/>")
+                Gmail.Send(True)
+            End If
+            If flag = False Then
+
+                ' code to get notes for update the task deails
+                If txtNotes.Text.Length > 0 Then
+                    sbNote.Append("Note " & txtNotes.Text & "<br/>")
+                End If
+                ' code to append all existing note for timesheer
                 con = New MySqlConnection(conString)
                 cmd = New MySqlCommand("Select Task from taskdetails where WorkFlowId=@WorkFlowId", con)
                 cmd.Parameters.AddWithValue("@WorkFlowId", _WorkFlowId)
@@ -403,8 +526,7 @@ Public Class PSWorkFlow
                     End If
                 End If
                 con.Close()
-
-                sb.Append(" Select w.WorkFlowId,w.Title,p.ProjName,ph.Stage,st.Step,i.Iteration,concat(e.EmpFirst ,' ', e.EmpLast) as AssignedTo,s.Status from WorkFlow w left outer join projects p on p.ProjID=w.ProjID left outer join Stage ph on ph.StageID=w.StageID ")
+                sb.Append(" Select w.WorkFlowId,w.Title,p.ProjName,ph.Stage,st.Step,i.Iteration,concat(e.EmpFirst ,' ', e.EmpLast) as AssignedTo,s.Status,w.PlannedStartDt,w.PlannedEndDt,w.ActualStartDt,w.ActualEndDate  from WorkFlow w left outer join projects p on p.ProjID=w.ProjID left outer join Stage ph on ph.StageID=w.StageID ")
                 sb.Append(" left outer join steps st on st.StepID=w.StepID left outer join iteration i on i.IterationID=w.IterationID left outer join Status s on s.StatusID=w.StatusID left outer join Employees e on e.EmpID=w.AssignedTo ")
                 sb.Append(" where w.Status=@Status And w.WorkFlowId=@WorkFlowId")
                 con = New MySqlConnection(conString)
@@ -448,6 +570,55 @@ Public Class PSWorkFlow
                         End If
                     End If
 
+                    'Dates
+                    Dim PlannedStartDt As String = ""
+                    If Convert.ToString(dcheck.Rows(0)("PlannedStartDt")).Length > 0 Then
+                        PlannedStartDt = Convert.ToDateTime(dcheck.Rows(0)("PlannedStartDt")).ToString("dd-MM-yyyy")
+                    Else
+                        PlannedStartDt = ""
+                    End If
+                    If txtPlannedStartDt.Text.Length > 0 Then
+                        If PlannedStartDt <> Convert.ToDateTime(txtPlannedStartDt.Text).ToString("dd-MM-yyyy") Then
+                            sbNote.Append("Planned Start Date Changed:  " & PlannedStartDt & " To " & Convert.ToDateTime(txtPlannedStartDt.Text).ToString("dd-MM-yyyy") & "<br/>")
+                        End If
+                    End If
+
+                    Dim PlannedEndDt As String = ""
+                    If Convert.ToString(dcheck.Rows(0)("PlannedEndDt")).Length > 0 Then
+                        PlannedEndDt = Convert.ToDateTime(dcheck.Rows(0)("PlannedEndDt")).ToString("dd-MM-yyyy")
+                    Else
+                        PlannedEndDt = ""
+                    End If
+                    If txtPlannedEndDt.Text.Length > 0 Then
+                        If PlannedEndDt <> Convert.ToDateTime(txtPlannedEndDt.Text).ToString("dd-MM-yyyy") Then
+                            sbNote.Append("Planned End Date Changed:  " & PlannedEndDt & " To " & Convert.ToDateTime(txtPlannedEndDt.Text).ToString("dd-MM-yyyy") & "<br/>")
+                        End If
+                    End If
+
+                    Dim ActualStartDt As String = ""
+                    If Convert.ToString(dcheck.Rows(0)("ActualStartDt")).Length > 0 Then
+                        ActualStartDt = Convert.ToDateTime(dcheck.Rows(0)("ActualStartDt")).ToString("dd-MM-yyyy")
+                    Else
+                        ActualStartDt = ""
+                    End If
+                    If txtActualStartDt.Text.Length > 0 Then
+                        If ActualStartDt <> Convert.ToDateTime(txtActualStartDt.Text).ToString("dd-MM-yyyy") Then
+                            sbNote.Append("Actual Start Date Changed:  " & ActualStartDt & " To " & Convert.ToDateTime(txtActualStartDt.Text).ToString("dd-MM-yyyy") & "<br/>")
+                        End If
+                    End If
+
+                    Dim ActualEndDate As String = ""
+                    If Convert.ToString(dcheck.Rows(0)("ActualEndDate")).Length > 0 Then
+                        ActualEndDate = Convert.ToDateTime(dcheck.Rows(0)("ActualEndDate")).ToString("dd-MM-yyyy")
+                    Else
+                        ActualEndDate = ""
+                    End If
+                    If txtActualEndDate.Text.Length > 0 Then
+                        If ActualEndDate <> Convert.ToDateTime(txtActualEndDate.Text).ToString("dd-MM-yyyy") Then
+                            sbNote.Append("Actual End Date Changed:  " & ActualEndDate & " To " & Convert.ToDateTime(txtActualEndDate.Text).ToString("dd-MM-yyyy") & "<br/>")
+                        End If
+                    End If
+
                     If Convert.ToString(dcheck.Rows(0)("AssignedTo")) <> ddlAssignedTo.SelectedItem.Text Then
                         If ddlAssignedTo.SelectedIndex > 0 Then
                             sbNote.Append("Assigned To Changed: " & Convert.ToString(dcheck.Rows(0)("AssignedTo")) & " To " & ddlAssignedTo.SelectedItem.Text & "<br/> ")
@@ -468,6 +639,58 @@ Public Class PSWorkFlow
                         End If
                     End If
                 End If
+
+                Dim Gmail As New Gmail()
+                Dim subject As String = String.Empty
+                Dim body As String
+                Dim FromEmp As DataTable = New DataTable()
+                FromEmp = Employee(UserId)
+                subject = "Pharma PM - Task Updated Note : " + _WorkFlowId.ToString() + " - " + txtTitle.Text
+                Dim Link As String
+                Link = "http://www.pharmapm.envigil.net/PSWorkFlow.aspx?wid=" & _WorkFlowId.ToString() & ""
+
+                body = "<b>Task Updated by : </b>" & Convert.ToString(FromEmp.Rows(0)("EmpName")) & " <br/> <br/>" & "<b>Description : </b> <br/>" & sbNote.ToString() & " <br/><br/>" & " <b> Link : </b> " & Link.ToString()
+                Gmail.MailFromName = "Pharma PM"
+                Gmail.MailFromAddress = "mail@avantienv.com"
+                Gmail.MailFromPassword = "john!manzo"
+
+                Dim ToMailId As DataTable = New DataTable()
+                Dim CreatedEmpId As Integer = GetEmpId()
+                If CreatedEmpId = UserId Then
+                    'For AssignedTo
+                    If ddlAssignedTo.SelectedIndex > 0 Then
+                        ToMailId = Employee(ddlAssignedTo.SelectedValue)
+                        Gmail.MailToAddress.Add(Convert.ToString(ToMailId.Rows(0)("EmpEmail")))
+                        FromEmp = Employee(UserId)
+                        Gmail.MailCCAddress.Add(Convert.ToString(FromEmp.Rows(0)("EmpEmail")))
+                    Else
+                        FromEmp = Employee(UserId)
+                        Gmail.MailToAddress.Add(Convert.ToString(FromEmp.Rows(0)("EmpEmail")))
+                    End If
+
+                ElseIf ddlAssignedTo.SelectedValue = UserId Then
+                    'For Created by if Assigned logged in
+                    ToMailId = Employee(CreatedEmpId)
+                    Gmail.MailToAddress.Add(Convert.ToString(ToMailId.Rows(0)("EmpEmail")))
+                    FromEmp = Employee(UserId)
+                    Gmail.MailCCAddress.Add(Convert.ToString(FromEmp.Rows(0)("EmpEmail")))
+                Else
+                    ' if not Created By not Assigned TO (CC User)
+
+                    If ddlAssignedTo.SelectedIndex > 0 Then
+                        ToMailId = Employee(ddlAssignedTo.SelectedValue)
+                        Gmail.MailToAddress.Add(ToMailId.Rows(0)("EmpEmail"))
+                        FromEmp = Employee(UserId)
+                        Gmail.MailCCAddress.Add(Convert.ToString(FromEmp.Rows(0)("EmpEmail")))
+                    Else
+                        FromEmp = Employee(UserId)
+                        Gmail.MailCCAddress.Add(Convert.ToString(FromEmp.Rows(0)("EmpEmail")))
+                    End If
+                End If
+                Gmail.MailSubject = subject
+                Gmail.MailBody = body.Replace(System.Environment.NewLine, "<br/>")
+                Gmail.Send(True)
+
             End If
             If sbNote.ToString.Length > 0 Then
                 Dim constr As String = ConfigurationManager.ConnectionStrings("dbcNoeth").ConnectionString
@@ -553,12 +776,16 @@ Public Class PSWorkFlow
         lblMsg.Visible = False
         dvMsgSuccess.Visible = False
         lblMsgSuccess.Visible = False
+
+        txtPlannedStartDt.Text = String.Empty
+        txtPlannedEndDt.Text = String.Empty
+        txtActualStartDt.Text = String.Empty
+        txtActualEndDate.Text = String.Empty
     End Sub
 
     Protected Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click
         ClearControls()
     End Sub
-
 
     Private Sub BindDDLStatus()
         Try
@@ -842,4 +1069,40 @@ Public Class PSWorkFlow
             ddlIteration.SelectedIndex = 0
         End If
     End Sub
+
+    Public Function Employee(ByVal EmpID) As DataTable
+        Try
+            Dim Query As String
+            dt.Clear()
+            Query = "Select concat(EmpFirst,' ',EmpLast) As EmpName,EmpEmail from employees where Status=true and EmpID=" & EmpID & ";"
+            con = New MySqlConnection(conString)
+            cmd = New MySqlCommand(Query, con)
+            dt = New DataTable()
+            dt.Columns.Clear()
+            dt.Clear()
+            con.Open()
+            dt.Load(cmd.ExecuteReader())
+            con.Close()
+        Catch ex As Exception
+            dvMsg.Visible = True
+            lblMsg.Text = ex.Message
+        End Try
+        Return dt
+    End Function
+
+    Private Function GetEmpId() As Integer
+        Dim FromEmpId As Integer
+        Try
+            Dim Query As String
+            Query = "Select EmpID from workflow where WorkFlowId=" & _WorkFlowId & " and Status=true;"
+            con = New MySqlConnection(conString)
+            cmd = New MySqlCommand(Query, con)
+            con.Open()
+            FromEmpId = cmd.ExecuteScalar()
+            con.Close()
+        Catch ex As Exception
+            Session("Alert") = ex.Message
+        End Try
+        Return FromEmpId
+    End Function
 End Class
